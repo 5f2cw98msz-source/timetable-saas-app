@@ -15,6 +15,16 @@ use from a link.
 
 ## What it looks like
 
+### Walkthrough
+
+A 90-second tour: the landing page, signing in, scheduling a class, a room
+clash being refused, the integrations, what a student sees, and the phone
+layout.
+
+**[Watch the walkthrough](docs/chalkline-walkthrough.mp4)** (MP4, 2.4 MB)
+
+<video src="https://github.com/5f2cw98msz-source/timetable-saas-app/raw/main/docs/chalkline-walkthrough.mp4" controls width="100%"></video>
+
 ### The weekly grid
 
 Every lecturer's classes in one view, each course in its own colour so the week
