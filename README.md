@@ -15,10 +15,15 @@ use from a link.
 
 ## Run it in two minutes
 
-You need **JDK 21** and **Maven**. Nothing else.
+> **On Windows?** Follow **[RUN-ON-WINDOWS.md](RUN-ON-WINDOWS.md)** instead.
+> It covers installing Java, the PowerShell differences, and the errors you are
+> most likely to hit.
+
+You need **JDK 21**. Maven is bundled, so use `./mvnw` (or `mvnw.cmd` on
+Windows) and you do not have to install it.
 
 ```bash
-mvn spring-boot:run
+./mvnw spring-boot:run
 ```
 
 Open <http://localhost:8080>, click **Start free**, and create your institution.
@@ -28,7 +33,7 @@ To start with a demo institution already created:
 
 ```bash
 DEMO_ORG_EMAIL=you@example.edu DEMO_ORG_PASSWORD=change_this_password \
-ALLOW_MANUAL_UPGRADE=true mvn spring-boot:run
+ALLOW_MANUAL_UPGRADE=true ./mvnw spring-boot:run
 ```
 
 `ALLOW_MANUAL_UPGRADE=true` puts a button on the billing page that switches your
@@ -38,9 +43,9 @@ setting up Stripe. It is refused automatically once real payments are configured
 Other useful commands:
 
 ```bash
-mvn test            # 58 tests
-mvn package         # builds target/chalkline.jar
-docker compose up   # runs it against a real PostgreSQL
+./mvnw test          # 59 tests
+./mvnw package       # builds target/chalkline.jar
+docker compose up    # runs it against a real PostgreSQL
 ```
 
 ---
@@ -166,10 +171,10 @@ the work.
 ## Tests
 
 ```bash
-mvn test
+./mvnw test
 ```
 
-58 tests, covering the things that would be expensive to get wrong:
+59 tests, covering the things that would be expensive to get wrong:
 
 | File | What it protects |
 |---|---|
@@ -192,6 +197,9 @@ checklist, then the guide for wherever you are hosting it:
 - **[DEPLOY-AWS.md](DEPLOY-AWS.md)**
 - **[DEPLOY-GOOGLE-CLOUD.md](DEPLOY-GOOGLE-CLOUD.md)**
 - **[DEPLOY-SELF-HOSTED.md](DEPLOY-SELF-HOSTED.md)** for a university server
+
+To run it on your own laptop first, see
+**[RUN-ON-WINDOWS.md](RUN-ON-WINDOWS.md)**.
 
 ---
 

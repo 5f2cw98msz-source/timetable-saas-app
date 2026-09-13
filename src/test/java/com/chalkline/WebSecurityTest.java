@@ -106,6 +106,19 @@ class WebSecurityTest {
     }
 
     @Test
+    @DisplayName("the plan badge shows the plan as it is now, not as it was at sign-in")
+    void planBadgeIsNotStale() throws Exception {
+        // The principal is built at sign-in, so this is the case that used to
+        // show "Free" to somebody who had just paid.
+        AppUserPrincipal signedInWhileFree = new AppUserPrincipal(uni.admin());
+        fixtures.makePremium(uni.organisation());
+
+        mvc.perform(get("/timetable").with(user(signedInWhileFree)))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("currentPlan", com.chalkline.domain.Plan.PREMIUM));
+    }
+
+    @Test
     @DisplayName("a lecturer is refused another lecturer's slot form")
     void lecturerCannotOpenAnotherLecturersSlot() throws Exception {
         mvc.perform(get("/timetable/slot")

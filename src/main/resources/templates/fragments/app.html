@@ -38,8 +38,10 @@
         </nav>
 
         <div class="account">
-            <span class="chip" th:classappend="${me?.premium} ? 'chip-plan' : 'chip-free'"
-                  th:text="${me?.plan?.label}">Free</span>
+            <!-- currentPlan, not me.plan: the principal is a sign-in snapshot
+                 and would still say "Free" right after someone upgrades. -->
+            <span class="chip" th:classappend="${currentPlan?.paid} ? 'chip-plan' : 'chip-free'"
+                  th:text="${currentPlan?.label}">Free</span>
 
             <a class="account-link" th:href="@{/settings/account}" th:title="${me?.username}">
                 <span class="avatar" th:text="${me?.initials}">AB</span>
