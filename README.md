@@ -21,9 +21,8 @@ A 90-second tour: the landing page, signing in, scheduling a class, a room
 clash being refused, the integrations, what a student sees, and the phone
 layout.
 
-**[Watch the walkthrough](docs/chalkline-walkthrough.mp4)** (MP4, 2.4 MB)
-
-<video src="https://github.com/5f2cw98msz-source/timetable-saas-app/raw/main/docs/chalkline-walkthrough.mp4" controls width="100%"></video>
+**[Watch the walkthrough](docs/chalkline-walkthrough.mp4)** &mdash; 90 seconds,
+2.4 MB. GitHub plays it in the browser; there is nothing to download.
 
 ### The weekly grid
 
