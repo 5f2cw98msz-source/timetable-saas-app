@@ -13,6 +13,67 @@ use from a link.
 
 ---
 
+## What it looks like
+
+### The weekly grid
+
+Every lecturer's classes in one view, each course in its own colour so the week
+is readable at a glance. Colour is never the only signal: every cell also shows
+its course code, so the grid still works in print and for a colour-blind
+reader.
+
+![The combined timetable, showing every lecturer's classes colour-coded across Monday to Friday](docs/screenshots/timetable-all-lecturers.png)
+
+An administrator can switch to any single lecturer and edit their week. Click
+an empty slot to add a class, or a full one to change it.
+
+![One lecturer's personal timetable](docs/screenshots/timetable-one-lecturer.png)
+
+### What students see
+
+A read-only page, no account needed, correct the moment you change something.
+Switch the link off and it stops working, without touching the timetable behind
+it.
+
+![The public student view: a read-only timetable with no navigation and an add-to-calendar button](docs/screenshots/public-student-view.png)
+
+### On a phone
+
+The grid scrolls sideways and the add and clear controls stay visible, because
+touch screens have no hover.
+
+<img src="docs/screenshots/mobile.png" alt="The timetable on a phone" width="320">
+
+### Integrations
+
+Calendar subscriptions, public pages and signed webhooks. The page is honest
+about what is connected and what is not.
+
+![The integrations screen](docs/screenshots/integrations.png)
+
+### Team and plan
+
+Staff accounts with a usage meter against the plan's cap, and roles that can be
+changed inline.
+
+![The team screen](docs/screenshots/team.png)
+
+Plans side by side, with the current one marked. When no Stripe keys are set it
+says so plainly rather than offering a button that cannot work.
+
+![Plan and billing](docs/screenshots/plan-and-billing.png)
+
+### The marketing site
+
+Shares one stylesheet with the product, so what a prospect is shown is what
+they get.
+
+![The Chalkline landing page](docs/screenshots/landing-page.png)
+
+![The pricing page](docs/screenshots/pricing.png)
+
+---
+
 ## Run it in two minutes
 
 > **On Windows?** Follow **[RUN-ON-WINDOWS.md](RUN-ON-WINDOWS.md)** instead.
