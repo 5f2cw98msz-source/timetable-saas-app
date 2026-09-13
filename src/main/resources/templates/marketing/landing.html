@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/marketing :: page('Chalkline | Timetabling for universities and colleges', ~{:: main})}"
+      lang="en">
+<body>
+<main>
+
+    <!-- ================= HERO ================= -->
+    <section class="hero m-section">
+        <div class="hero-glow" aria-hidden="true"></div>
+
+        <span class="eyebrow"><span class="dot"></span> Built for departments, not IT projects</span>
+
+        <h1 class="hero-title">
+            The timetable everyone can <span class="accent">actually see</span>
+        </h1>
+
+        <p class="hero-sub">
+            Lecturers manage their own week. Students get a live page instead of a PDF that was
+            out of date the day it was sent. Everything syncs to the calendar they already use.
+        </p>
+
+        <div class="hero-actions">
+            <a class="btn btn-primary btn-lg" th:href="@{/signup}">Start free</a>
+            <a class="btn btn-quiet btn-lg" th:href="@{/pricing}">See pricing</a>
+        </div>
+
+        <p class="hero-note">Free for up to 5 staff. No card required.</p>
+
+        <div class="shot-frame">
+            <div class="shot-bar">
+                <span class="shot-dot"></span><span class="shot-dot"></span><span class="shot-dot"></span>
+                <span class="shot-url">chalkline.app/timetable</span>
+            </div>
+            <!--
+              A live rendering of the real timetable components, not a
+              screenshot: it stays sharp at any size, follows the visitor's
+              light or dark theme, and cannot go out of date. Only the data
+              below is invented.
+            -->
+            <div class="preview" role="img"
+                 aria-label="The Chalkline weekly timetable, showing colour-coded classes across Monday to Friday">
+                <div class="preview-top">
+                    <span class="brand-mark" aria-hidden="true">C</span>
+                    <div class="preview-nav">
+                        <span class="on">Timetable</span>
+                        <span>Rooms &amp; courses</span>
+                        <span>Team</span>
+                        <span>Integrations</span>
+                    </div>
+                    <span class="chip chip-plan">Premium</span>
+                    <span class="avatar" aria-hidden="true">AB</span>
+                </div>
+
+                <div class="preview-body">
+                    <div class="preview-head">
+                        <div>
+                            <div class="preview-title">All lecturers</div>
+                            <div class="preview-sub">Combined overview &middot; 9 classes scheduled</div>
+                        </div>
+                        <span class="chip chip-ok">Live</span>
+                    </div>
+
+                    <table class="preview-grid">
+                        <thead>
+                        <tr>
+                            <th class="t">Time</th>
+                            <th>Monday</th><th>Tuesday</th><th>Wednesday</th>
+                            <th>Thursday</th><th>Friday</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td class="t">08:00</td>
+                            <td class="c-violet"><span class="pv"><b>CS101</b><i>Hall A</i><em>A. Boateng</em></span></td>
+                            <td></td>
+                            <td class="c-teal"><span class="pv"><b>MTH110</b><i>Room 3</i><em>K. Mensah</em></span></td>
+                            <td></td>
+                            <td class="c-amber"><span class="pv"><b>ENG101</b><i>Hall B</i><em>E. Danso</em></span></td>
+                        </tr>
+                        <tr>
+                            <td class="t">09:00</td>
+                            <td></td>
+                            <td class="c-coral"><span class="pv"><b>BUS150</b><i>Hall B</i><em>K. Mensah</em></span></td>
+                            <td></td>
+                            <td class="c-violet"><span class="pv"><b>CS101</b><i>Hall A</i><em>A. Boateng</em></span></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="t">10:00</td>
+                            <td class="c-sky"><span class="pv"><b>CS204</b><i>Lab 1</i><em>A. Boateng</em></span></td>
+                            <td></td>
+                            <td class="c-pink"><span class="pv"><b>PHY101</b><i>Lab 2</i><em>E. Danso</em></span></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="t">11:00</td>
+                            <td></td>
+                            <td class="c-teal"><span class="pv"><b>MTH110</b><i>Room 3</i><em>K. Mensah</em></span></td>
+                            <td></td>
+                            <td></td>
+                            <td class="c-indigo"><span class="pv"><b>CS310</b><i>Lab 1</i><em>A. Boateng</em></span></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= TRUST ================= -->
+    <section class="trust m-section">
+        <p class="trust-label">Designed around how departments really work</p>
+        <div class="trust-row">
+            <span class="trust-item">Every lecturer owns their own grid</span>
+            <span class="trust-item">One room, one booking</span>
+            <span class="trust-item">Works on a phone</span>
+            <span class="trust-item">No installation</span>
+        </div>
+    </section>
+
+    <!-- ================= FEATURES ================= -->
+    <section class="m-block m-section" id="features">
+        <div class="m-head">
+            <h2>Everything a department needs, nothing it does not</h2>
+            <p>
+                Most timetabling software is priced and built for a whole university.
+                Chalkline is built for the department that just needs the week to be right.
+            </p>
+        </div>
+
+        <div class="feature-grid">
+            <article class="feature">
+                <div class="feature-icon i-violet" aria-hidden="true">1</div>
+                <h3>Personal timetables</h3>
+                <p>
+                    Each lecturer sees and edits only their own week. Administrators can open
+                    anyone's grid, or a combined view of the whole department at once.
+                </p>
+            </article>
+
+            <article class="feature">
+                <div class="feature-icon i-teal" aria-hidden="true">2</div>
+                <h3>Clashes caught as you type</h3>
+                <p>
+                    Two people cannot book the same room in the same hour. Put a class of 60 into a
+                    room that seats 30 and it tells you before anybody turns up.
+                </p>
+            </article>
+
+            <article class="feature">
+                <div class="feature-icon i-coral" aria-hidden="true">3</div>
+                <h3>Public pages for students</h3>
+                <p>
+                    Share a link. Students open it on a phone with no account, and it is correct
+                    the moment you change something. Switch the link off whenever you like.
+                </p>
+            </article>
+
+            <article class="feature">
+                <div class="feature-icon i-amber" aria-hidden="true">4</div>
+                <h3>In the calendar they already use</h3>
+                <p>
+                    One subscription link puts every class into Outlook, Google Calendar or Apple
+                    Calendar, and keeps it up to date. Nothing to install, nothing to re-approve.
+                </p>
+            </article>
+
+            <article class="feature">
+                <div class="feature-icon i-sky" aria-hidden="true">5</div>
+                <h3>Connects to the rest of your stack</h3>
+                <p>
+                    A read API and signed webhooks, so your student portal, your website or your
+                    automation tool can read the timetable and react when it changes.
+                </p>
+            </article>
+
+            <article class="feature">
+                <div class="feature-icon i-pink" aria-hidden="true">6</div>
+                <h3>You can see who changed what</h3>
+                <p>
+                    Every change is recorded with who made it and when. Useful in week one of term,
+                    and essential the first time two people disagree about a room.
+                </p>
+            </article>
+        </div>
+    </section>
+
+    <!-- ================= USE CASES ================= -->
+    <section class="m-block m-block-alt" id="use-cases">
+        <div class="m-section">
+            <div class="m-head">
+                <h2>Who it is for</h2>
+                <p>Three ways departments use Chalkline from the first week.</p>
+            </div>
+
+            <div class="usecase-grid">
+                <article class="usecase u-violet">
+                    <p class="who">Head of department</p>
+                    <h3>Stop running the timetable out of a spreadsheet</h3>
+                    <p>
+                        See every lecturer's week in one grid, spot the gaps and the double-bookings,
+                        and give each person the ability to fix their own without going through you.
+                    </p>
+                </article>
+
+                <article class="usecase u-teal">
+                    <p class="who">Lecturer</p>
+                    <h3>Know where you are meant to be</h3>
+                    <p>
+                        Your own timetable, on your phone, in the calendar you already check.
+                        Change a room and everyone looking at it sees the change straight away.
+                    </p>
+                </article>
+
+                <article class="usecase u-coral">
+                    <p class="who">Course administrator</p>
+                    <h3>Answer the same question once</h3>
+                    <p>
+                        Publish a link instead of emailing a PDF to four hundred students and then
+                        fielding the replies when a room moves.
+                    </p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= SECOND SCREENSHOT ================= -->
+    <section class="m-block m-section">
+        <div class="m-head">
+            <h2>Set up in an afternoon</h2>
+            <p>
+                Add your rooms and courses, invite your staff with one link, and let them fill in
+                their own week. There is no implementation project.
+            </p>
+        </div>
+
+        <div class="shot-frame">
+            <div class="shot-bar">
+                <span class="shot-dot"></span><span class="shot-dot"></span><span class="shot-dot"></span>
+                <span class="shot-url">chalkline.app/settings/integrations</span>
+            </div>
+            <div class="preview" role="img"
+                 aria-label="The integrations screen: calendar subscriptions, public timetable links and webhooks">
+                <div class="preview-top">
+                    <span class="brand-mark" aria-hidden="true">C</span>
+                    <div class="preview-nav">
+                        <span>Timetable</span>
+                        <span>Rooms &amp; courses</span>
+                        <span>Team</span>
+                        <span class="on">Integrations</span>
+                    </div>
+                    <span class="chip chip-plan">Premium</span>
+                    <span class="avatar" aria-hidden="true">AB</span>
+                </div>
+
+                <div class="preview-body">
+                    <div class="preview-head">
+                        <div>
+                            <div class="preview-title">Integrations</div>
+                            <div class="preview-sub">Getting timetables into everything else you run</div>
+                        </div>
+                    </div>
+
+                    <div class="preview-cards">
+                        <div class="preview-card">
+                            <div class="h">
+                                <span class="n">Calendar subscriptions</span>
+                                <span class="chip chip-ok">Active</span>
+                            </div>
+                            <p>Outlook, Google and Apple Calendar. One link per lecturer, kept up to date automatically.</p>
+                            <div class="u">https://chalkline.app/feed/lecturer/&#8230;.ics</div>
+                        </div>
+
+                        <div class="preview-card">
+                            <div class="h">
+                                <span class="n">Public timetable pages</span>
+                                <span class="chip chip-ok">2 live</span>
+                            </div>
+                            <p>A read-only page for students. No account needed, and you can switch it off at any time.</p>
+                            <div class="u">https://chalkline.app/s/8Kq2&#8230;</div>
+                        </div>
+
+                        <div class="preview-card">
+                            <div class="h">
+                                <span class="n">Webhooks</span>
+                                <span class="chip chip-ok">Delivered</span>
+                            </div>
+                            <p>Signed JSON on every change, so Slack, Teams, Zapier or your own portal can react.</p>
+                            <div class="u">X-Chalkline-Signature: sha256=&#8230;</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= PRICING ================= -->
+    <section class="m-block m-block-alt" id="pricing">
+        <div class="m-section">
+            <div class="m-head">
+                <h2>Simple pricing</h2>
+                <p>Start free. Upgrade when you want students to see it too.</p>
+            </div>
+
+            <div class="price-grid">
+                <div th:each="plan : ${plans}" class="price-card"
+                     th:classappend="${plan.paid} ? 'is-featured'">
+                    <span class="price-flag" th:if="${plan.paid}">Most institutions</span>
+
+                    <div class="price-name" th:text="${plan.label}">Free</div>
+                    <div class="price-tag">
+                        <span class="price-amount" th:text="'&pound;' + ${plan.monthlyPriceMajor}">0</span>
+                        <span class="price-period">per month</span>
+                    </div>
+                    <p class="price-tagline" th:text="${plan.tagline}">Tagline</p>
+
+                    <ul class="price-list">
+                        <li>
+                            <span class="tick">&check;</span>
+                            <span><strong th:text="${plan.unlimitedStaff} ? 'Unlimited staff accounts'
+                                            : ${plan.staffLimit} + ' staff accounts'">5 staff</strong></span>
+                        </li>
+                        <li><span class="tick">&check;</span><span>Personal and combined timetables</span></li>
+                        <li><span class="tick">&check;</span><span>Room clash detection</span></li>
+                        <li th:each="feature : ${premiumFeatures}">
+                            <span th:if="${plan.includes(feature)}" class="tick">&check;</span>
+                            <span th:unless="${plan.includes(feature)}" class="cross">&ndash;</span>
+                            <span th:text="${feature.label}">Feature</span>
+                        </li>
+                    </ul>
+
+                    <a class="btn btn-block"
+                       th:classappend="${plan.paid} ? 'btn-primary' : 'btn-quiet'"
+                       th:href="@{/signup}"
+                       th:text="${plan.paid} ? 'Start free, upgrade later' : 'Start free'">Start free</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= FAQ ================= -->
+    <section class="m-block m-section">
+        <div class="m-head">
+            <h2>Questions we get asked</h2>
+        </div>
+
+        <div class="faq">
+            <details>
+                <summary>Do students need an account?</summary>
+                <p>
+                    No. You publish a link and they open it. There is nothing for them to sign up
+                    for, install or remember, which is the only way a student-facing timetable ever
+                    gets used.
+                </p>
+            </details>
+
+            <details>
+                <summary>Can we run it on our own servers?</summary>
+                <p>
+                    Yes. Chalkline is a single container with a PostgreSQL database, and the
+                    repository includes step-by-step guides for Azure, AWS and Google Cloud, as
+                    well as running it on your own machine. Nothing is locked to a vendor.
+                </p>
+            </details>
+
+            <details>
+                <summary>What happens to our data if we stop paying?</summary>
+                <p>
+                    Nothing is deleted. The account drops back to the free plan, so public pages and
+                    calendar links switch off, but every timetable stays exactly as it was and you
+                    can export it as a spreadsheet at any time.
+                </p>
+            </details>
+
+            <details>
+                <summary>Does it replace our student record system?</summary>
+                <p>
+                    No, and it does not try to. It handles the weekly teaching timetable, and
+                    connects to whatever else you run through its API and webhooks.
+                </p>
+            </details>
+
+            <details>
+                <summary>Can two lecturers share a room?</summary>
+                <p>
+                    By default no, because that is usually a mistake. If your department genuinely
+                    shares rooms, an administrator can turn the check off in the institution settings.
+                </p>
+            </details>
+
+            <details>
+                <summary>How is our data kept?</summary>
+                <p>
+                    Each institution's data is separate and no request can reach across that
+                    boundary. Passwords are stored as bcrypt hashes. If you host it yourself, the
+                    data stays on your own infrastructure entirely.
+                </p>
+            </details>
+        </div>
+    </section>
+
+    <!-- ================= FINAL CALL TO ACTION ================= -->
+    <section class="m-section">
+        <div class="cta">
+            <h2>Put the timetable somewhere people can see it</h2>
+            <p>
+                Free for up to five staff accounts, for as long as you like.
+                Set it up this afternoon and have it running before term starts.
+            </p>
+            <a class="btn btn-lg" th:href="@{/signup}">Start free</a>
+        </div>
+    </section>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,191 @@
+# ============================================================================
+#  CHALKLINE - CONFIGURATION
+# ============================================================================
+#
+#  Every setting reads an environment variable, using the pattern
+#      ${VARIABLE_NAME:value used when the variable is not set}
+#
+#  You never edit this file to deploy. You set environment variables on the
+#  hosting platform and the same build runs anywhere.
+#
+#  The defaults are LOCAL DEVELOPMENT defaults: safe on your own laptop, not
+#  safe on the public internet. See DEPLOYMENT.md and .env.example.
+# ============================================================================
+
+spring:
+  application:
+    name: Chalkline
+
+  profiles:
+    default: dev
+
+  # --------------------------------------------------------------------
+  # DATABASE CONNECTION                                   <-- PLACEHOLDER
+  # --------------------------------------------------------------------
+  # Default: an H2 file at ./data/chalkline-db.mv.db. Zero setup, good for
+  # development, WRONG for production -- most cloud hosts wipe local disk on
+  # every deploy, which would erase every timetable.
+  #
+  # For production set these to your managed PostgreSQL:
+  #   DATABASE_URL=jdbc:postgresql://HOST:5432/DATABASE
+  #   DATABASE_USERNAME=...
+  #   DATABASE_PASSWORD=...
+  #
+  # Platforms often hand you  postgres://user:pass@host:5432/db
+  # That is NOT a JDBC URL. Rewrite it as jdbc:postgresql://host:5432/db and
+  # put the credentials in the two variables. This is the most common cause
+  # of a failed first deploy.
+  # --------------------------------------------------------------------
+  datasource:
+    url: ${DATABASE_URL:jdbc:h2:file:./data/chalkline-db;AUTO_SERVER=TRUE}
+    username: ${DATABASE_USERNAME:sa}
+    password: ${DATABASE_PASSWORD:}
+    hikari:
+      maximum-pool-size: ${DATABASE_POOL_SIZE:10}
+      connection-timeout: 10000
+
+  jpa:
+    hibernate:
+      # "update" lets Hibernate create and alter tables to match the entities.
+      # Convenient while the schema is still moving. Once it settles, add
+      # Flyway migrations and set this to "validate" (see README).
+      ddl-auto: ${DATABASE_DDL_AUTO:update}
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+
+  thymeleaf:
+    cache: ${TEMPLATE_CACHE:false}
+
+server:
+  port: ${PORT:8080}
+
+  # Behind a cloud load balancer the app is reached over HTTPS but receives
+  # plain HTTP internally. This makes redirects and cookies use the real
+  # public scheme rather than the internal one.
+  forward-headers-strategy: framework
+
+  servlet:
+    session:
+      timeout: ${SESSION_TIMEOUT:8h}
+      cookie:
+        http-only: true
+        same-site: lax
+        # MUST be true in production. Left false so http://localhost works.
+        secure: ${SESSION_COOKIE_SECURE:false}
+
+  error:
+    whitelabel:
+      enabled: false
+
+# Only the health check is exposed. Never add "env" or "configprops" -- they
+# would publish your database password and Stripe keys on a public URL.
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+
+# ============================================================================
+#  APPLICATION SETTINGS
+# ============================================================================
+app:
+
+  product-name: ${PRODUCT_NAME:Chalkline}
+  support-email: ${SUPPORT_EMAIL:support@example.com}
+
+  # ------------------------------------------------------------------
+  # PUBLIC URL                                          <-- PLACEHOLDER
+  # How the world reaches this deployment. Used to build share links,
+  # calendar subscription URLs and the return URLs Stripe sends people
+  # back to, so it MUST be the real public address in production.
+  # ------------------------------------------------------------------
+  public-url: ${PUBLIC_URL:http://localhost:8080}
+
+  security:
+    # Whether new institutions may sign themselves up. Set false when this
+    # deployment serves one institution only.
+    allow-sign-up: ${ALLOW_SIGN_UP:true}
+    min-password-length: ${MIN_PASSWORD_LENGTH:8}
+
+  # ------------------------------------------------------------------
+  # BILLING - STRIPE                                    <-- PLACEHOLDER
+  #
+  # Leave STRIPE_SECRET_KEY blank and billing is off: everyone stays on
+  # the free plan and the upgrade buttons say payments are not set up.
+  # That is the right setting for a university-hosted deployment.
+  #
+  # To turn payments on you need, from your Stripe dashboard:
+  #   STRIPE_SECRET_KEY      sk_live_... (or sk_test_... while testing)
+  #   STRIPE_PRICE_ID        price_...   the recurring monthly price
+  #   STRIPE_WEBHOOK_SECRET  whsec_...   from the webhook endpoint you add,
+  #                                      pointing at PUBLIC_URL/billing/webhook
+  #
+  # Card details never reach this application: customers pay on a page
+  # hosted by Stripe. See DEPLOYMENT.md, "Turning on billing".
+  # ------------------------------------------------------------------
+  billing:
+    secret-key: ${STRIPE_SECRET_KEY:}
+    publishable-key: ${STRIPE_PUBLISHABLE_KEY:}
+    price-id: ${STRIPE_PRICE_ID:}
+    webhook-secret: ${STRIPE_WEBHOOK_SECRET:}
+
+    # Lets an administrator switch their own institution to Premium with no
+    # payment, so premium features can be demonstrated before Stripe exists.
+    # Refused outright whenever Stripe IS configured, so it can never become
+    # a way around paying on a real deployment.
+    allow-manual-upgrade: ${ALLOW_MANUAL_UPGRADE:false}
+
+  demo:
+    # Fills a brand-new institution with a few sample rooms and courses so the
+    # first screen is not an empty grid.
+    seed-starter-catalogue: ${SEED_STARTER_CATALOGUE:true}
+
+    # Creates one demo institution at first start, and only when the database
+    # is completely empty. Leave the email blank to create nothing at all.
+    email: ${DEMO_ORG_EMAIL:}
+    password: ${DEMO_ORG_PASSWORD:}
+    organisation-name: ${DEMO_ORG_NAME:Demo University}
+
+logging:
+  level:
+    com.chalkline: ${LOG_LEVEL:INFO}
+
+# ============================================================================
+#  NOT WIRED UP YET - placeholders for the next features
+# ============================================================================
+#
+#  EMAIL (needed for "forgot my password", invitations and change notices).
+#  Add spring-boot-starter-mail to pom.xml, uncomment, then set the variables.
+#
+#  spring:
+#    mail:
+#      host: ${MAIL_HOST:smtp.office365.com}
+#      port: ${MAIL_PORT:587}
+#      username: ${MAIL_USERNAME:}
+#      password: ${MAIL_PASSWORD:}
+#      properties:
+#        mail.smtp.auth: true
+#        mail.smtp.starttls.enable: true
+#
+#  SINGLE SIGN-ON (staff sign in with their existing university account).
+#  Add spring-boot-starter-oauth2-client to pom.xml, then:
+#
+#  spring:
+#    security:
+#      oauth2:
+#        client:
+#          registration:
+#            azure:
+#              client-id: ${OAUTH_CLIENT_ID:}
+#              client-secret: ${OAUTH_CLIENT_SECRET:}
+#              scope: openid,profile,email
+#          provider:
+#            azure:
+#              issuer-uri: https://login.microsoftonline.com/${OAUTH_TENANT_ID:}/v2.0
+# ============================================================================

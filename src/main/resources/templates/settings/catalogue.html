@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/app :: page('Rooms and courses', ~{:: main})}" lang="en">
+<body>
+<main>
+    <div class="page-head">
+        <div>
+            <h1 class="page-title">Rooms and courses</h1>
+            <p class="page-sub">What classes can be scheduled into. Each course keeps its own colour on the grid.</p>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/settings-nav :: tabs('catalogue')}"></div>
+
+    <div class="grid-2">
+        <section class="card">
+            <div class="card-head">
+                <h2 class="section-title">Courses <span class="count" th:text="${#lists.size(courses)}">0</span></h2>
+            </div>
+
+            <form th:action="@{/settings/catalogue/courses}" method="post" th:object="${courseForm}" class="form">
+                <div class="field-row">
+                    <label class="field">
+                        <span class="field-label">Code</span>
+                        <input type="text" th:field="*{code}" placeholder="CS101" required>
+                    </label>
+                    <label class="field">
+                        <span class="field-label">Name</span>
+                        <input type="text" th:field="*{name}" placeholder="Introduction to Programming" required>
+                    </label>
+                    <label class="field">
+                        <span class="field-label">Students</span>
+                        <input type="number" th:field="*{expectedStudents}" min="0" placeholder="60">
+                    </label>
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </div>
+                <span class="field-hint">
+                    Expected students is optional. Give it and the grid warns when a class is put in a room too small for it.
+                </span>
+            </form>
+
+            <div class="table-scroll">
+                <table class="data">
+                    <thead>
+                    <tr>
+                        <th scope="col">Code</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Students</th>
+                        <th scope="col"><span class="visually-hidden">Actions</span></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="course : ${courses}">
+                        <td>
+                            <span class="chip" th:classappend="'c-' + ${course.colour}"
+                                  th:text="${course.code}">CS101</span>
+                        </td>
+                        <td th:text="${course.name}">Introduction</td>
+                        <td th:text="${course.expectedStudents} != null ? ${course.expectedStudents} : '--'">60</td>
+                        <td class="row-actions">
+                            <form th:action="@{'/settings/catalogue/courses/' + ${course.id} + '/delete'}"
+                                  method="post" class="inline">
+                                <button type="submit" class="link-danger"
+                                        th:data-confirm="'Delete ' + ${course.code} + '?'">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(courses)}">
+                        <td colspan="4" class="empty-cell">No courses yet.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="card">
+            <div class="card-head">
+                <h2 class="section-title">Rooms <span class="count" th:text="${#lists.size(rooms)}">0</span></h2>
+            </div>
+
+            <form th:action="@{/settings/catalogue/rooms}" method="post" th:object="${roomForm}" class="form">
+                <div class="field-row">
+                    <label class="field">
+                        <span class="field-label">Name</span>
+                        <input type="text" th:field="*{name}" placeholder="Lecture Hall A" required>
+                    </label>
+                    <label class="field">
+                        <span class="field-label">Seats</span>
+                        <input type="number" th:field="*{capacity}" min="0" placeholder="120">
+                    </label>
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </div>
+                <label class="field">
+                    <span class="field-label">Facilities, optional</span>
+                    <input type="text" th:field="*{facilities}" placeholder="Projector, lab PCs">
+                </label>
+            </form>
+
+            <div class="table-scroll">
+                <table class="data">
+                    <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Seats</th>
+                        <th scope="col">Facilities</th>
+                        <th scope="col"><span class="visually-hidden">Actions</span></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="room : ${rooms}">
+                        <td th:text="${room.name}">Lab 1</td>
+                        <td th:text="${room.capacity} > 0 ? ${room.capacity} : '--'">30</td>
+                        <td th:text="${room.facilities} != null ? ${room.facilities} : '--'">Projector</td>
+                        <td class="row-actions">
+                            <form th:action="@{'/settings/catalogue/rooms/' + ${room.id} + '/delete'}"
+                                  method="post" class="inline">
+                                <button type="submit" class="link-danger"
+                                        th:data-confirm="'Delete ' + ${room.name} + '?'">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(rooms)}">
+                        <td colspan="4" class="empty-cell">No rooms yet.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <section class="card">
+        <h2 class="section-title">Bulk import</h2>
+        <p class="section-sub">
+            Paste rows from a spreadsheet. Anything already present is skipped rather than
+            duplicated, so re-importing a corrected file is safe.
+        </p>
+
+        <th:block th:if="${canImport}">
+            <form th:action="@{/settings/catalogue/import}" method="post" class="form">
+                <label class="field">
+                    <span class="field-label">What are you importing?</span>
+                    <select name="type">
+                        <option value="courses">Courses - code, name, expected students</option>
+                        <option value="rooms">Rooms - name, seats, facilities</option>
+                    </select>
+                </label>
+                <label class="field">
+                    <span class="field-label">Rows</span>
+                    <textarea name="csv" required
+                              placeholder="CS101,Introduction to Programming,60&#10;CS204,Data Structures,45"></textarea>
+                    <span class="field-hint">One row per line, values separated by commas. A header row is ignored.</span>
+                </label>
+                <button type="submit" class="btn btn-primary">Import</button>
+            </form>
+        </th:block>
+
+        <div class="locked" th:unless="${canImport}">
+            <div class="locked-head">
+                <span class="chip chip-plan">Premium</span>
+                <span class="locked-title">Bulk import</span>
+            </div>
+            <p class="locked-body">
+                Load an entire department from a spreadsheet instead of typing it in one row at a time.
+            </p>
+            <a class="btn btn-primary btn-sm" th:href="@{/settings/billing}">See plans</a>
+        </div>
+    </section>
+</main>
+</body>
+</html>

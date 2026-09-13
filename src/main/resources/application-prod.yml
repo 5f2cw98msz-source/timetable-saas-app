@@ -1,0 +1,27 @@
+# ============================================================================
+#  PRODUCTION OVERRIDES
+#  Active when SPRING_PROFILES_ACTIVE=prod. Only what differs from
+#  application.yml -- everything else is inherited.
+# ============================================================================
+
+spring:
+  thymeleaf:
+    cache: true
+  jpa:
+    show-sql: false
+
+server:
+  servlet:
+    session:
+      cookie:
+        # The session cookie is never sent over plain HTTP. Every platform in
+        # DEPLOYMENT.md terminates HTTPS, so this is safe to force on.
+        secure: true
+  error:
+    include-stacktrace: never
+    include-message: never
+
+logging:
+  level:
+    root: INFO
+    org.hibernate.SQL: WARN

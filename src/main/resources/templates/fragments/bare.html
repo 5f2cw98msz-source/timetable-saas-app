@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<!-- Shell for sign-in and sign-up: one centred card, no navigation. -->
+<html xmlns:th="http://www.thymeleaf.org"
+      th:fragment="page(pageTitle, content)"
+      lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${pageTitle} + ' | ' + ${productName}">Chalkline</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="icon" th:href="@{/favicon.svg}" type="image/svg+xml">
+</head>
+<body class="bare">
+<div class="bare-wrap">
+    <div class="bare-brand">
+        <a class="brand" th:href="@{/}">
+            <span class="brand-mark" aria-hidden="true">C</span>
+            <span class="brand-text" th:text="${productName}">Chalkline</span>
+        </a>
+    </div>
+
+    <div class="bare-card">
+        <div th:replace="~{fragments/flash :: banners}"></div>
+        <div th:replace="${content}">Page content</div>
+    </div>
+
+    <p class="bare-foot">
+        Need help? <a th:href="'mailto:' + ${supportEmail}" th:text="${supportEmail}">support</a>
+    </p>
+</div>
+<script th:src="@{/js/app.js}" defer></script>
+</body>
+</html>

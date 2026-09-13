@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/marketing :: page('Pricing | Chalkline', ~{:: main})}" lang="en">
+<body>
+<main>
+    <section class="m-block m-section">
+        <div class="m-head">
+            <h2>Pricing</h2>
+            <p>
+                One paid plan. Priced per institution, not per lecturer, so adding staff never
+                costs you more.
+            </p>
+        </div>
+
+        <div class="price-grid">
+            <div th:each="plan : ${plans}" class="price-card"
+                 th:classappend="${plan.paid} ? 'is-featured'">
+                <span class="price-flag" th:if="${plan.paid}">Most institutions</span>
+
+                <div class="price-name" th:text="${plan.label}">Free</div>
+                <div class="price-tag">
+                    <span class="price-amount" th:text="'&pound;' + ${plan.monthlyPriceMajor}">0</span>
+                    <span class="price-period">per month</span>
+                </div>
+                <p class="price-tagline" th:text="${plan.tagline}">Tagline</p>
+
+                <ul class="price-list">
+                    <li>
+                        <span class="tick">&check;</span>
+                        <span><strong th:text="${plan.unlimitedStaff} ? 'Unlimited staff accounts'
+                                        : ${plan.staffLimit} + ' staff accounts'">5 staff</strong></span>
+                    </li>
+                    <li><span class="tick">&check;</span><span>Personal and combined timetables</span></li>
+                    <li><span class="tick">&check;</span><span>Room clash detection</span></li>
+                    <li><span class="tick">&check;</span><span>Capacity warnings</span></li>
+                    <li th:each="feature : ${premiumFeatures}">
+                        <span th:if="${plan.includes(feature)}" class="tick">&check;</span>
+                        <span th:unless="${plan.includes(feature)}" class="cross">&ndash;</span>
+                        <span>
+                            <span th:text="${feature.label}">Feature</span>
+                        </span>
+                    </li>
+                </ul>
+
+                <a class="btn btn-block" th:classappend="${plan.paid} ? 'btn-primary' : 'btn-quiet'"
+                   th:href="@{/signup}"
+                   th:text="${plan.paid} ? 'Start free, upgrade later' : 'Start free'">Start free</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="m-block m-block-alt">
+        <div class="m-section">
+            <div class="m-head">
+                <h2>What Premium actually unlocks</h2>
+                <p>Everything below is included at one price, however many staff you have.</p>
+            </div>
+
+            <div class="feature-grid">
+                <article class="feature" th:each="feature : ${premiumFeatures}">
+                    <h3 th:text="${feature.label}">Feature</h3>
+                    <p th:text="${feature.description}">What it does</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="m-section">
+        <div class="cta">
+            <h2>Try it before you pay for it</h2>
+            <p>The free plan is not a trial. It does not expire, and it covers a small department properly.</p>
+            <a class="btn btn-lg" th:href="@{/signup}">Start free</a>
+        </div>
+    </section>
+</main>
+</body>
+</html>

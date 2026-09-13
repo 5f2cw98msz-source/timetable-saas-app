@@ -1,0 +1,59 @@
+# =============================================================================
+#  Runs Chalkline against a real PostgreSQL on your own machine or server.
+#
+#      docker compose up --build
+#      open http://localhost:8080
+#
+#  This is also a perfectly good way to run it permanently on a single
+#  university server. Data lives in the named volume below.
+#  To start completely fresh:  docker compose down -v
+# =============================================================================
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: chalkline
+      POSTGRES_USER: chalkline
+      # Local only. Change this before running anywhere real.
+      POSTGRES_PASSWORD: local_dev_password
+    volumes:
+      - chalkline-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U chalkline"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+
+      DATABASE_URL: jdbc:postgresql://db:5432/chalkline
+      DATABASE_USERNAME: chalkline
+      DATABASE_PASSWORD: local_dev_password
+
+      PUBLIC_URL: http://localhost:8080
+      SUPPORT_EMAIL: timetable@example.edu
+
+      # Reached over plain http://localhost here, so the secure-cookie flag
+      # has to be off or sign-in will not stick.
+      SESSION_COOKIE_SECURE: "false"
+
+      # Lets you see the Premium features without setting up Stripe.
+      ALLOW_MANUAL_UPGRADE: "true"
+
+      DEMO_ORG_EMAIL: admin@example.edu
+      DEMO_ORG_PASSWORD: change_this_password
+      DEMO_ORG_NAME: Demo University
+    ports:
+      - "8080:8080"
+
+volumes:
+  chalkline-db:

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/app :: page('Timetable', ~{:: main})}" lang="en">
+<body>
+<main>
+    <div class="page-head">
+        <div>
+            <h1 class="page-title" th:text="${grid.scopeLabel}">Your timetable</h1>
+            <p class="page-sub" th:text="${grid.scopeHint}">Hint</p>
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <!-- Admin only: whose timetable to look at. -->
+        <form sec:authorize="hasRole('ADMIN')" th:action="@{/timetable}" method="get"
+              class="field field-inline">
+            <label class="field-label" for="lecturer-select">Viewing</label>
+            <select id="lecturer-select" name="lecturer" data-autosubmit>
+                <option value="all" th:selected="${grid.combined}">All lecturers (read-only)</option>
+                <option th:each="option : ${grid.lecturers}"
+                        th:value="${option.email}"
+                        th:text="${option.displayName}"
+                        th:selected="${option.selected}">Name</option>
+            </select>
+            <button type="submit" class="btn btn-quiet btn-sm" data-hide-when-js>Show</button>
+        </form>
+
+        <div class="toolbar-right">
+            <a th:if="${canExport}" class="btn btn-quiet btn-sm"
+               th:href="@{/timetable/export.csv(lecturer=${grid.selectedLecturer})}">Export CSV</a>
+            <a th:unless="${canExport}" class="btn btn-ghost btn-sm"
+               th:href="@{/settings/billing}" title="Premium feature">Export CSV</a>
+
+            <a class="btn btn-quiet btn-sm" th:href="@{/settings/account}"
+               th:if="${hasCalendarFeed}">Add to my calendar</a>
+        </div>
+    </div>
+
+    <div class="empty-note" sec:authorize="hasRole('ADMIN')"
+         th:if="${#lists.isEmpty(grid.lecturers)}">
+        No lecturer accounts yet.
+        <a th:href="@{/settings/team}">Add one under Team</a>, or share the join link so staff can add themselves.
+    </div>
+
+    <div th:replace="~{fragments/grid :: table(${grid})}"></div>
+
+    <p class="grid-foot">
+        <span th:text="${grid.classCount}">0</span>
+        <span th:text="${grid.classCount == 1} ? 'class scheduled' : 'classes scheduled'">classes scheduled</span><!--
+     --><span th:if="${grid.editable}"> &middot; click any slot to add or change a class</span>
+    </p>
+</main>
+</body>
+</html>

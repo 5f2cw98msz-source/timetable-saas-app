@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/app :: page('Audit log', ~{:: main})}" lang="en">
+<body>
+<main>
+    <div class="page-head">
+        <div>
+            <h1 class="page-title">Audit log</h1>
+            <p class="page-sub">Who changed what, and when. Recorded for every plan; readable on Premium.</p>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/settings-nav :: tabs('audit')}"></div>
+
+    <section class="card">
+        <div class="table-scroll">
+            <table class="data">
+                <thead>
+                <tr>
+                    <th scope="col">When</th>
+                    <th scope="col">Who</th>
+                    <th scope="col">Action</th>
+                    <th scope="col">Detail</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="event : ${events.content}">
+                    <td th:text="${#temporals.format(event.at, 'd MMM yyyy HH:mm')}">1 Jan 2026 09:00</td>
+                    <td th:text="${event.actorName}">Name</td>
+                    <td><span class="chip" th:text="${event.action}">Class scheduled</span></td>
+                    <td th:text="${event.detail}" class="empty-cell">Detail</td>
+                </tr>
+                <tr th:if="${events.totalElements == 0}">
+                    <td colspan="4" class="empty-cell">Nothing recorded yet.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="form-actions" th:if="${events.totalPages > 1}">
+            <a class="btn btn-quiet btn-sm" th:if="${page > 0}"
+               th:href="@{/settings/audit(page=${page - 1})}">Newer</a>
+            <span class="field-hint">
+                Page <span th:text="${page + 1}">1</span> of <span th:text="${events.totalPages}">1</span>
+            </span>
+            <a class="btn btn-quiet btn-sm" th:if="${page + 1 < events.totalPages}"
+               th:href="@{/settings/audit(page=${page + 1})}">Older</a>
+        </div>
+    </section>
+</main>
+</body>
+</html>

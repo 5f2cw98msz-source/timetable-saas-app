@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/bare :: page('Start free', ~{:: main})}" lang="en">
+<body>
+<main>
+    <h1 class="card-title">Start your institution</h1>
+    <p class="card-sub">
+        Free for up to 5 staff accounts. No card needed, and nothing expires.
+    </p>
+
+    <div class="alert alert-error" role="alert" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+    <form th:action="@{/signup}" method="post" th:object="${form}" class="form">
+        <label class="field">
+            <span class="field-label">Institution or department</span>
+            <input type="text" th:field="*{organisationName}" required autofocus
+                   placeholder="Abetifi Technical University">
+            <span class="field-hint">Shown to your staff and on any public timetable you publish.</span>
+        </label>
+
+        <label class="field">
+            <span class="field-label">Your name</span>
+            <input type="text" th:field="*{displayName}" autocomplete="name" required>
+        </label>
+
+        <label class="field">
+            <span class="field-label">Work email</span>
+            <input type="email" th:field="*{email}" autocomplete="username"
+                   autocapitalize="none" spellcheck="false" required>
+            <span class="field-hint">This becomes the first administrator account.</span>
+        </label>
+
+        <label class="field">
+            <span class="field-label">Password</span>
+            <input type="password" th:field="*{password}" autocomplete="new-password" required>
+            <span class="field-hint">
+                At least <span th:text="${minPasswordLength}">8</span> characters.
+            </span>
+        </label>
+
+        <button type="submit" class="btn btn-primary btn-block btn-lg">Create my institution</button>
+    </form>
+
+    <p class="card-foot">
+        Already have an account? <a th:href="@{/login}">Sign in</a>
+    </p>
+</main>
+</body>
+</html>

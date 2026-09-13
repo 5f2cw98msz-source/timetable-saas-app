@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/app :: page('Plan and billing', ~{:: main})}" lang="en">
+<body>
+<main>
+    <div class="page-head">
+        <div>
+            <h1 class="page-title">Plan and billing</h1>
+            <p class="page-sub">What your institution is on, and what Premium adds.</p>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/settings-nav :: tabs('billing')}"></div>
+
+    <div class="alert alert-success" th:if="${param.upgraded}">
+        Thank you. Your subscription is active and Premium features are on.
+    </div>
+    <div class="alert alert-info" th:if="${param.cancelled}">
+        Checkout was cancelled. Nothing has been charged.
+    </div>
+
+    <section class="card">
+        <div class="card-head">
+            <div>
+                <h2 class="section-title">
+                    Current plan:
+                    <span th:text="${effectivePlan.label}">Free</span>
+                </h2>
+                <p class="section-sub">
+                    <span th:text="${staffUsed}">3</span> staff accounts in use.
+                    <th:block th:unless="${effectivePlan.unlimitedStaff}">
+                        This plan covers <span th:text="${effectivePlan.staffLimit}">5</span>.
+                    </th:block>
+                    <th:block th:if="${organisation.subscriptionStatus.name() != 'NONE'}">
+                        Subscription status:
+                        <strong th:text="${organisation.subscriptionStatus.label}">Active</strong>.
+                    </th:block>
+                </p>
+            </div>
+            <span class="chip" th:classappend="${effectivePlan.paid} ? 'chip-plan' : 'chip-free'"
+                  th:text="${effectivePlan.label}">Free</span>
+        </div>
+
+        <!-- No Stripe keys on this deployment. Say so plainly. -->
+        <div class="alert alert-info" th:unless="${billingConfigured}">
+            Payments are not configured on this deployment, so nothing can be charged.
+            To turn them on, set the Stripe keys described in
+            <span class="mono">DEPLOYMENT.md</span>.
+        </div>
+
+        <div class="form-actions">
+            <form th:if="${billingConfigured and !effectivePlan.paid}"
+                  th:action="@{/settings/billing/checkout}" method="post">
+                <button type="submit" class="btn btn-primary btn-lg">Upgrade to Premium</button>
+            </form>
+
+            <form th:if="${billingConfigured and organisation.stripeCustomerId != null}"
+                  th:action="@{/settings/billing/portal}" method="post">
+                <button type="submit" class="btn btn-quiet">Manage subscription or cancel</button>
+            </form>
+
+            <!-- Development and demo only. Never shown when Stripe works. -->
+            <form th:if="${manualUpgradeAvailable}" th:action="@{/settings/billing/manual}" method="post">
+                <input type="hidden" name="premium" th:value="${!effectivePlan.paid}">
+                <button type="submit" class="btn btn-quiet"
+                        th:text="${effectivePlan.paid}
+                                 ? 'Switch back to Free (demo)' : 'Try Premium without paying (demo)'">
+                    Try Premium
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <div class="price-grid">
+        <div th:each="plan : ${plans}" class="price-card"
+             th:classappend="${plan.paid} ? 'is-featured'">
+            <span class="price-flag" th:if="${plan.paid}">Most institutions</span>
+
+            <div class="price-name" th:text="${plan.label}">Free</div>
+            <div class="price-tag">
+                <span class="price-amount" th:text="'&pound;' + ${plan.monthlyPriceMajor}">0</span>
+                <span class="price-period">per month</span>
+            </div>
+            <p class="price-tagline" th:text="${plan.tagline}">Tagline</p>
+
+            <ul class="price-list">
+                <li>
+                    <span class="tick">&check;</span>
+                    <span>
+                        <strong th:text="${plan.unlimitedStaff} ? 'Unlimited staff accounts'
+                                          : ${plan.staffLimit} + ' staff accounts'">5 staff</strong>
+                    </span>
+                </li>
+                <li><span class="tick">&check;</span><span>Personal timetables and the combined view</span></li>
+                <li><span class="tick">&check;</span><span>Room clash detection</span></li>
+                <li th:each="feature : ${features}">
+                    <span th:if="${plan.includes(feature)}" class="tick">&check;</span>
+                    <span th:unless="${plan.includes(feature)}" class="cross">&ndash;</span>
+                    <span th:text="${feature.label}">Feature</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</main>
+</body>
+</html>

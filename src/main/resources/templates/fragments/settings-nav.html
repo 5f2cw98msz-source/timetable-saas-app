@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
+<body>
+<!-- Sub-navigation shown on every Settings page. `active` names the current one. -->
+<nav class="nav" th:fragment="tabs(active)" aria-label="Settings">
+    <a th:href="@{/settings/account}" class="nav-link"
+       th:classappend="${active} == 'account' ? 'is-active'">Your account</a>
+
+    <th:block sec:authorize="hasRole('ADMIN')">
+        <a th:href="@{/settings/organisation}" class="nav-link"
+           th:classappend="${active} == 'organisation' ? 'is-active'">Institution</a>
+        <a th:href="@{/settings/team}" class="nav-link"
+           th:classappend="${active} == 'team' ? 'is-active'">Team</a>
+        <a th:href="@{/settings/catalogue}" class="nav-link"
+           th:classappend="${active} == 'catalogue' ? 'is-active'">Rooms &amp; courses</a>
+        <a th:href="@{/settings/integrations}" class="nav-link"
+           th:classappend="${active} == 'integrations' ? 'is-active'">Integrations</a>
+        <a th:href="@{/settings/api-keys}" class="nav-link"
+           th:classappend="${active} == 'api' ? 'is-active'">API keys</a>
+        <a th:href="@{/settings/audit}" class="nav-link"
+           th:classappend="${active} == 'audit' ? 'is-active'">Audit log</a>
+        <a th:href="@{/settings/billing}" class="nav-link"
+           th:classappend="${active} == 'billing' ? 'is-active'">Plan &amp; billing</a>
+    </th:block>
+</nav>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/app :: page('Not allowed', ~{:: main})}" lang="en">
+<body>
+<main>
+    <div class="page-narrow">
+        <h1 class="page-title">Not allowed</h1>
+        <p class="page-sub">
+            Lecturers can only see and change their own timetable. If you think you should have
+            access to this, contact
+            <a th:href="'mailto:' + ${supportEmail}" th:text="${supportEmail}">support</a>.
+        </p>
+        <p class="form-actions">
+            <a class="btn btn-primary" th:href="@{/timetable}">Back to my timetable</a>
+        </p>
+    </div>
+</main>
+</body>
+</html>

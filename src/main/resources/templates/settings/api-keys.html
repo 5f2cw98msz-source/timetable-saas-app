@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/app :: page('API keys', ~{:: main})}" lang="en">
+<body>
+<main>
+    <div class="page-head">
+        <div>
+            <h1 class="page-title">API keys</h1>
+            <p class="page-sub">Read your timetables from your own systems.</p>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/settings-nav :: tabs('api')}"></div>
+
+    <!-- A new key is shown once and never again. -->
+    <div class="secret-reveal" th:if="${newApiKey}">
+        <span class="field-label">Your new key. Copy it now.</span>
+        <div class="copy-row">
+            <input type="text" th:value="${newApiKey}" readonly id="new-key">
+            <button type="button" class="btn btn-quiet" data-copy-for="new-key">Copy</button>
+        </div>
+        <p class="field-hint">
+            Only a hash of this key is stored, so it cannot be shown again. If you lose it,
+            revoke it and make another.
+        </p>
+    </div>
+
+    <div class="grid-2">
+        <section class="card">
+            <h2 class="section-title">Create a key</h2>
+            <p class="section-sub">Name it after whatever will use it, so revoking the right one is easy later.</p>
+
+            <th:block th:if="${canUseApi}">
+                <form th:action="@{/settings/api-keys}" method="post" class="form">
+                    <label class="field">
+                        <span class="field-label">Name</span>
+                        <input type="text" name="name" placeholder="Student portal" required>
+                    </label>
+                    <button type="submit" class="btn btn-primary">Create key</button>
+                </form>
+            </th:block>
+
+            <div class="locked" th:unless="${canUseApi}">
+                <div class="locked-head">
+                    <span class="chip chip-plan">Premium</span>
+                    <span class="locked-title">API access</span>
+                </div>
+                <p class="locked-body">
+                    Pull timetables into your student portal, your website, or anything else you run.
+                </p>
+                <a class="btn btn-primary btn-sm" th:href="@{/settings/billing}">See plans</a>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2 class="section-title">How to call it</h2>
+            <p class="section-sub">Send the key as a bearer token. Every response covers your institution only.</p>
+
+            <div class="field">
+                <span class="field-label">Example</span>
+                <textarea readonly rows="7" th:text="'curl ' + ${baseUrl} + '/api/v1/timetable \\' + '&#10;' +
+                    '  -H &quot;Authorization: Bearer ck_your_key_here&quot;'">curl</textarea>
+            </div>
+
+            <p class="field-hint">
+                Available endpoints:
+                <span class="mono">/api/v1/timetable</span>,
+                <span class="mono">/api/v1/courses</span>,
+                <span class="mono">/api/v1/rooms</span>,
+                <span class="mono">/api/v1/lecturers</span>. All read-only.
+            </p>
+        </section>
+    </div>
+
+    <section class="card">
+        <div class="card-head">
+            <h2 class="section-title">Your keys <span class="count" th:text="${#lists.size(keys)}">0</span></h2>
+        </div>
+
+        <div class="table-scroll">
+            <table class="data">
+                <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Key</th>
+                    <th scope="col">Created</th>
+                    <th scope="col">Last used</th>
+                    <th scope="col">Status</th>
+                    <th scope="col"><span class="visually-hidden">Actions</span></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="key : ${keys}" th:classappend="${key.revoked} ? 'row-muted'">
+                    <td th:text="${key.name}">Student portal</td>
+                    <td class="mono" th:text="${key.keyPrefix} + '...'">ck_abc...</td>
+                    <td th:text="${#temporals.format(key.createdAt, 'd MMM yyyy')}">1 Jan 2026</td>
+                    <td th:text="${key.lastUsedAt} != null
+                                 ? ${#temporals.format(key.lastUsedAt, 'd MMM yyyy')} : 'Never'">Never</td>
+                    <td>
+                        <span class="chip" th:classappend="${key.revoked} ? 'chip-off' : 'chip-ok'"
+                              th:text="${key.revoked} ? 'Revoked' : 'Active'">Active</span>
+                    </td>
+                    <td class="row-actions">
+                        <form th:unless="${key.revoked}"
+                              th:action="@{'/settings/api-keys/' + ${key.id} + '/revoke'}"
+                              method="post" class="inline">
+                            <button type="submit" class="link-danger"
+                                    data-confirm="Revoke this key? Anything using it stops working immediately.">
+                                Revoke
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(keys)}">
+                    <td colspan="6" class="empty-cell">No keys yet.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/app :: page('Team', ~{:: main})}" lang="en">
+<body>
+<main>
+    <div class="page-head">
+        <div>
+            <h1 class="page-title">Team</h1>
+            <p class="page-sub">Staff who can sign in. Lecturers get their own private timetable.</p>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/settings-nav :: tabs('team')}"></div>
+
+    <div class="split">
+        <section class="card">
+            <h2 class="section-title">Add someone</h2>
+
+            <div class="field">
+                <span class="field-label">Staff accounts used</span>
+                <div class="meter">
+                    <!-- Width is applied by app.js: the Content-Security-Policy
+                         blocks style attributes, but CSSOM changes are fine. -->
+                    <div class="meter-fill" th:classappend="${staffLimitReached} ? 'is-full'"
+                         th:attr="data-meter-percent=${staffPercent}"></div>
+                </div>
+                <span class="field-hint">
+                    <span th:text="${staffUsed}">3</span> used
+                    <th:block th:unless="${organisation.effectivePlan.unlimitedStaff}">
+                        of <span th:text="${organisation.effectivePlan.staffLimit}">5</span>
+                        on the <span th:text="${organisation.effectivePlan.label}">Free</span> plan
+                    </th:block>
+                    <th:block th:if="${organisation.effectivePlan.unlimitedStaff}">- unlimited on Premium</th:block>
+                </span>
+            </div>
+
+            <div class="locked" th:if="${staffLimitReached}">
+                <div class="locked-head">
+                    <span class="chip chip-plan">Premium</span>
+                    <span class="locked-title">You have filled the free plan</span>
+                </div>
+                <p class="locked-body">Premium removes the cap on staff accounts.</p>
+                <a class="btn btn-primary btn-sm" th:href="@{/settings/billing}">See plans</a>
+            </div>
+
+            <form th:unless="${staffLimitReached}" th:action="@{/settings/team}" method="post"
+                  th:object="${form}" class="form">
+                <label class="field">
+                    <span class="field-label">Name</span>
+                    <input type="text" th:field="*{displayName}" required>
+                </label>
+
+                <label class="field">
+                    <span class="field-label">Work email</span>
+                    <input type="email" th:field="*{email}" autocapitalize="none" spellcheck="false" required>
+                </label>
+
+                <label class="field">
+                    <span class="field-label">Temporary password</span>
+                    <input type="text" th:field="*{password}" autocomplete="off" required>
+                    <span class="field-hint">
+                        At least <span th:text="${minPasswordLength}">8</span> characters.
+                        They choose their own at first sign-in.
+                    </span>
+                </label>
+
+                <label class="field">
+                    <span class="field-label">Role</span>
+                    <select th:field="*{role}">
+                        <option th:each="role : ${roles}" th:value="${role}" th:text="${role.label}">Lecturer</option>
+                    </select>
+                    <span class="field-hint">
+                        Administrators manage everything. Only lecturers get a timetable.
+                    </span>
+                </label>
+
+                <button type="submit" class="btn btn-primary">Add to team</button>
+            </form>
+
+            <div class="danger-zone">
+                <span class="field-label">Or share the join link</span>
+                <div class="copy-row">
+                    <input type="text" th:value="${joinUrl}" readonly id="team-join-url">
+                    <button type="button" class="btn btn-quiet" data-copy-for="team-join-url">Copy</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="card split-wide">
+            <div class="card-head">
+                <h2 class="section-title">Everyone <span class="count" th:text="${#lists.size(members)}">0</span></h2>
+            </div>
+
+            <div class="table-scroll">
+                <table class="data">
+                    <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Role</th>
+                        <th scope="col">Classes</th>
+                        <th scope="col">Status</th>
+                        <th scope="col"><span class="visually-hidden">Actions</span></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="member : ${members}" th:classappend="${!member.enabled} ? 'row-muted'">
+                        <td th:text="${member.displayName}">Name</td>
+                        <td class="mono" th:text="${member.email}">a@b.com</td>
+                        <td>
+                            <form th:action="@{'/settings/team/' + ${member.id} + '/role'}" method="post" class="inline">
+                                <select name="role" data-autosubmit class="btn-sm"
+                                        th:disabled="${member.id == me.id}">
+                                    <option th:each="role : ${roles}" th:value="${role}"
+                                            th:text="${role.label}"
+                                            th:selected="${role == member.role}">Lecturer</option>
+                                </select>
+                            </form>
+                        </td>
+                        <td th:text="${classCounts[member.id]}">0</td>
+                        <td>
+                            <span class="chip" th:classappend="${member.enabled} ? 'chip-ok' : 'chip-off'"
+                                  th:text="${member.enabled} ? 'Active' : 'Suspended'">Active</span>
+                        </td>
+                        <td class="row-actions">
+                            <form th:action="@{'/settings/team/' + ${member.id} + '/enabled'}" method="post" class="inline">
+                                <input type="hidden" name="enabled" th:value="${!member.enabled}">
+                                <button type="submit" class="link-quiet"
+                                        th:text="${member.enabled} ? 'Suspend' : 'Reactivate'">Suspend</button>
+                            </form>
+                            <form th:action="@{'/settings/team/' + ${member.id} + '/delete'}" method="post" class="inline">
+                                <button type="submit" class="link-danger"
+                                        th:data-confirm="'Remove ' + ${member.displayName} + '? This also deletes their '
+                                            + ${classCounts[member.id]} + ' scheduled class(es). This cannot be undone.'">
+                                    Remove
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(members)}">
+                        <td colspan="6" class="empty-cell">Nobody yet.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</main>
+</body>
+</html>

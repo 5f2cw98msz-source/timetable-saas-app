@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/app :: page('Integrations', ~{:: main})}" lang="en">
+<body>
+<main>
+    <div class="page-head">
+        <div>
+            <h1 class="page-title">Integrations</h1>
+            <p class="page-sub">
+                Getting timetables out of here and into everything else your institution uses.
+            </p>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/settings-nav :: tabs('integrations')}"></div>
+
+    <!-- ===== Calendar: works with every calendar app, no setup per vendor ===== -->
+    <section class="card">
+        <div class="card-head">
+            <div>
+                <h2 class="section-title">Calendar subscriptions</h2>
+                <p class="section-sub">
+                    Outlook, Google Calendar, Apple Calendar and almost everything else can
+                    subscribe to a calendar link. Each lecturer gets their own under
+                    <a th:href="@{/settings/account}">Your account</a>. There is nothing to install
+                    and nothing to re-approve when a token expires, because there is no token to expire.
+                </p>
+            </div>
+            <span class="chip" th:classappend="${canCalendar} ? 'chip-ok' : 'chip-plan'"
+                  th:text="${canCalendar} ? 'Active' : 'Premium'">Active</span>
+        </div>
+
+        <div class="field" th:if="${canCalendar and calendarUrl != null}">
+            <span class="field-label">Your own calendar link</span>
+            <div class="copy-row">
+                <input type="text" th:value="${calendarUrl}" readonly id="int-cal-url">
+                <button type="button" class="btn btn-quiet" data-copy-for="int-cal-url">Copy</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Public pages for students ===== -->
+    <section class="card">
+        <div class="card-head">
+            <div>
+                <h2 class="section-title">Public timetable pages</h2>
+                <p class="section-sub">
+                    A read-only page anyone can open without an account. Switch a link off and it
+                    stops working immediately, without touching the timetable behind it.
+                </p>
+            </div>
+            <span class="chip" th:classappend="${canShare} ? 'chip-ok' : 'chip-plan'"
+                  th:text="${canShare} ? 'Active' : 'Premium'">Active</span>
+        </div>
+
+        <th:block th:if="${canShare}">
+            <form th:action="@{/settings/integrations/share}" method="post"
+                  th:object="${shareForm}" class="form">
+                <div class="field-row">
+                    <label class="field">
+                        <span class="field-label">Label</span>
+                        <input type="text" th:field="*{label}" placeholder="Semester 1 timetable" required>
+                    </label>
+                    <label class="field">
+                        <span class="field-label">Shows</span>
+                        <select th:field="*{scope}">
+                            <option value="WHOLE_ORGANISATION">Everyone's timetable</option>
+                            <option value="SINGLE_LECTURER">One lecturer's timetable</option>
+                        </select>
+                    </label>
+                    <label class="field">
+                        <span class="field-label">Which lecturer</span>
+                        <select th:field="*{lecturerEmail}">
+                            <option value="">Not applicable</option>
+                            <option th:each="lecturer : ${lecturers}"
+                                    th:value="${lecturer.email}" th:text="${lecturer.displayName}">Name</option>
+                        </select>
+                    </label>
+                    <button type="submit" class="btn btn-primary">Create link</button>
+                </div>
+            </form>
+
+            <div class="table-scroll">
+                <table class="data">
+                    <thead>
+                    <tr>
+                        <th scope="col">Label</th>
+                        <th scope="col">Shows</th>
+                        <th scope="col">Link</th>
+                        <th scope="col">Views</th>
+                        <th scope="col">Status</th>
+                        <th scope="col"><span class="visually-hidden">Actions</span></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="link, iter : ${shareLinks}" th:classappend="${!link.enabled} ? 'row-muted'">
+                        <td th:text="${link.label}">Semester 1</td>
+                        <td th:text="${link.lecturer} != null ? ${link.lecturer.displayName} : 'Everyone'">Everyone</td>
+                        <td>
+                            <div class="copy-row">
+                                <input type="text" th:value="${baseUrl} + '/s/' + ${link.token}" readonly
+                                       th:id="'share-' + ${iter.index}">
+                                <button type="button" class="btn btn-quiet btn-sm"
+                                        th:attr="data-copy-for='share-' + ${iter.index}">Copy</button>
+                            </div>
+                        </td>
+                        <td th:text="${link.viewCount}">0</td>
+                        <td>
+                            <span class="chip" th:classappend="${link.enabled} ? 'chip-ok' : 'chip-off'"
+                                  th:text="${link.enabled} ? 'Live' : 'Off'">Live</span>
+                        </td>
+                        <td class="row-actions">
+                            <form th:action="@{'/settings/integrations/share/' + ${link.id} + '/enabled'}"
+                                  method="post" class="inline">
+                                <input type="hidden" name="enabled" th:value="${!link.enabled}">
+                                <button type="submit" class="link-quiet"
+                                        th:text="${link.enabled} ? 'Switch off' : 'Switch on'">Switch off</button>
+                            </form>
+                            <form th:action="@{'/settings/integrations/share/' + ${link.id} + '/delete'}"
+                                  method="post" class="inline">
+                                <button type="submit" class="link-danger"
+                                        data-confirm="Delete this link permanently?">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(shareLinks)}">
+                        <td colspan="6" class="empty-cell">No public links yet.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </th:block>
+
+        <div class="locked" th:unless="${canShare}">
+            <div class="locked-head">
+                <span class="chip chip-plan">Premium</span>
+                <span class="locked-title">Public timetable pages</span>
+            </div>
+            <p class="locked-body">
+                Give students a link instead of a PDF that is out of date the day after you send it.
+            </p>
+            <a class="btn btn-primary btn-sm" th:href="@{/settings/billing}">See plans</a>
+        </div>
+    </section>
+
+    <!-- ===== Webhooks: the general-purpose escape hatch ===== -->
+    <section class="card">
+        <div class="card-head">
+            <div>
+                <h2 class="section-title">Webhooks</h2>
+                <p class="section-sub">
+                    Every timetable change is posted to your URL as JSON, signed with the endpoint's
+                    own secret in an <span class="mono">X-Chalkline-Signature</span> header. This is
+                    how you connect anything not listed here, including Zapier, Power Automate and
+                    your own scripts.
+                </p>
+            </div>
+            <span class="chip" th:classappend="${canWebhook} ? 'chip-ok' : 'chip-plan'"
+                  th:text="${canWebhook} ? 'Active' : 'Premium'">Active</span>
+        </div>
+
+        <th:block th:if="${canWebhook}">
+            <form th:action="@{/settings/integrations/webhooks}" method="post" class="form">
+                <div class="field-row">
+                    <label class="field">
+                        <span class="field-label">Endpoint URL</span>
+                        <input type="url" name="url" placeholder="https://example.edu/hooks/timetable" required>
+                    </label>
+                    <button type="submit" class="btn btn-primary">Add webhook</button>
+                </div>
+                <span class="field-hint">Must be https. Timetable data leaves this server, so it is never sent in the clear.</span>
+            </form>
+
+            <div class="table-scroll">
+                <table class="data">
+                    <thead>
+                    <tr>
+                        <th scope="col">URL</th>
+                        <th scope="col">Signing secret</th>
+                        <th scope="col">Last attempt</th>
+                        <th scope="col"><span class="visually-hidden">Actions</span></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="hook, iter : ${webhooks}">
+                        <td class="mono" th:text="${hook.url}">https://...</td>
+                        <td>
+                            <div class="copy-row">
+                                <input type="password" th:value="${hook.secret}" readonly
+                                       th:id="'hook-' + ${iter.index}">
+                                <button type="button" class="btn btn-quiet btn-sm"
+                                        th:attr="data-copy-for='hook-' + ${iter.index}">Copy</button>
+                            </div>
+                        </td>
+                        <td th:text="${hook.lastStatus} != null ? ${hook.lastStatus} : 'Not called yet'">--</td>
+                        <td class="row-actions">
+                            <form th:action="@{'/settings/integrations/webhooks/' + ${hook.id} + '/delete'}"
+                                  method="post" class="inline">
+                                <button type="submit" class="link-danger"
+                                        data-confirm="Remove this webhook?">Remove</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(webhooks)}">
+                        <td colspan="4" class="empty-cell">No webhooks yet.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </th:block>
+
+        <div class="locked" th:unless="${canWebhook}">
+            <div class="locked-head">
+                <span class="chip chip-plan">Premium</span>
+                <span class="locked-title">Webhooks</span>
+            </div>
+            <p class="locked-body">Connect Chalkline to anything else you run.</p>
+            <a class="btn btn-primary btn-sm" th:href="@{/settings/billing}">See plans</a>
+        </div>
+    </section>
+
+    <!-- ===== Honest status of the rest ===== -->
+    <section class="card">
+        <h2 class="section-title">Coming next</h2>
+        <p class="section-sub">
+            These are not connected yet. Each needs an application registered with that vendor,
+            which has to be done once per deployment rather than in code. Until then, the
+            calendar link covers Outlook and Google, and webhooks cover the rest.
+            <a th:href="@{/settings/api-keys}">The API</a> is available today.
+        </p>
+
+        <div class="table-scroll">
+            <table class="data">
+                <thead>
+                <tr>
+                    <th scope="col">Integration</th>
+                    <th scope="col">What it would do</th>
+                    <th scope="col">What it needs</th>
+                    <th scope="col">Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Microsoft 365 sign-in</td>
+                    <td>Staff sign in with their university account, no separate password</td>
+                    <td>An app registration in your Entra tenant</td>
+                    <td><span class="chip chip-warn">Planned</span></td>
+                </tr>
+                <tr>
+                    <td>Google Workspace sign-in</td>
+                    <td>The same, for institutions on Google</td>
+                    <td>An OAuth client in Google Cloud</td>
+                    <td><span class="chip chip-warn">Planned</span></td>
+                </tr>
+                <tr>
+                    <td>Canvas LMS</td>
+                    <td>Push each class into the matching Canvas course calendar</td>
+                    <td>A Canvas API token per institution</td>
+                    <td><span class="chip chip-warn">Planned</span></td>
+                </tr>
+                <tr>
+                    <td>Moodle</td>
+                    <td>The same, for Moodle sites</td>
+                    <td>Moodle web services enabled, plus a token</td>
+                    <td><span class="chip chip-warn">Planned</span></td>
+                </tr>
+                <tr>
+                    <td>Slack and Teams</td>
+                    <td>Post timetable changes into a channel</td>
+                    <td>Nothing - use a webhook above today</td>
+                    <td><span class="chip chip-ok">Use webhooks</span></td>
+                </tr>
+                <tr>
+                    <td>Zapier and Power Automate</td>
+                    <td>Connect to several thousand other tools</td>
+                    <td>Nothing - use a webhook above today</td>
+                    <td><span class="chip chip-ok">Use webhooks</span></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+</body>
+</html>

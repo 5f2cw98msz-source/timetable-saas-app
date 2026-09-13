@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<body>
+<!--
+  The weekly grid itself, shared by the signed-in page and the public share
+  page so the two can never drift apart.
+
+  `grid` is a GridView. When grid.editable is false every cell is inert,
+  which is what makes this safe to render for anonymous visitors.
+-->
+<div class="grid-scroll" th:fragment="table(grid)">
+    <table class="grid">
+        <caption class="visually-hidden">Weekly timetable. Rows are time slots, columns are days.</caption>
+        <thead>
+        <tr>
+            <th scope="col" class="time-col">Time</th>
+            <th scope="col" th:each="day : ${grid.days}" th:text="${day}">Monday</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="row : ${grid.rows}">
+            <th scope="row" class="time-col" th:text="${row.label}">08:00 - 09:00</th>
+
+            <td th:each="cell : ${row.cells}" class="cell">
+
+                <!-- Editable: one lecturer's grid -->
+                <th:block th:if="${grid.editable}">
+                    <a th:if="${cell.empty}" class="cell-add"
+                       th:href="@{/timetable/slot(day=${cell.dayIndex},slot=${cell.slotIndex},lecturer=${grid.selectedLecturer})}"
+                       th:aria-label="'Add a class on ' + ${grid.days[cell.dayIndex]} + ' at ' + ${row.label}">
+                        <span aria-hidden="true">+</span>
+                    </a>
+
+                    <th:block th:unless="${cell.empty}" th:with="entry=${cell.entries[0]}">
+                        <a class="cell-entry" th:classappend="'c-' + ${entry.colour}"
+                           th:href="@{/timetable/slot(day=${cell.dayIndex},slot=${cell.slotIndex},lecturer=${grid.selectedLecturer})}"
+                           th:title="${entry.courseName}">
+                            <span class="cell-course" th:text="${entry.courseCode}">CS101</span>
+                            <span class="cell-room" th:text="${entry.roomName}">Lab 1</span>
+                            <span class="cell-warn" th:if="${entry.hasCapacityWarning()}"
+                                  th:title="${entry.capacityWarning}">Over capacity</span>
+                        </a>
+                        <form th:action="@{/timetable/slot/clear}" method="post" class="cell-clear">
+                            <input type="hidden" name="day" th:value="${cell.dayIndex}">
+                            <input type="hidden" name="slot" th:value="${cell.slotIndex}">
+                            <input type="hidden" name="lecturer" th:value="${grid.selectedLecturer}">
+                            <button type="submit" class="link-danger"
+                                    th:data-confirm="'Clear ' + ${entry.courseCode} + ' from ' + ${grid.days[cell.dayIndex]} + ', ' + ${row.label} + '?'">
+                                Clear
+                            </button>
+                        </form>
+                    </th:block>
+                </th:block>
+
+                <!-- Read-only: everybody at once, or a public page -->
+                <th:block th:unless="${grid.editable}">
+                    <div class="cell-stack">
+                        <div th:each="entry : ${cell.entries}"
+                             class="cell-entry" th:classappend="'c-' + ${entry.colour}"
+                             th:title="${entry.courseName}">
+                            <span class="cell-course" th:text="${entry.courseCode}">CS101</span>
+                            <span class="cell-room" th:text="${entry.roomName}">Lab 1</span>
+                            <span class="cell-lecturer" th:if="${grid.combined}"
+                                  th:text="${entry.lecturerName}">Lecturer</span>
+                        </div>
+                    </div>
+                </th:block>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

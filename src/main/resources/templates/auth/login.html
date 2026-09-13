@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/bare :: page('Sign in', ~{:: main})}" lang="en">
+<body>
+<main>
+    <h1 class="card-title">Sign in</h1>
+    <p class="card-sub">Access is restricted to staff accounts.</p>
+
+    <div class="alert alert-error" role="alert" th:if="${param.error}">
+        Wrong email or password.
+    </div>
+
+    <form th:action="@{/login}" method="post" class="form">
+        <label class="field">
+            <span class="field-label">Email address</span>
+            <input type="email" name="username" autocomplete="username"
+                   autocapitalize="none" spellcheck="false" required autofocus>
+        </label>
+
+        <label class="field">
+            <span class="field-label">Password</span>
+            <input type="password" name="password" autocomplete="current-password" required>
+        </label>
+
+        <button type="submit" class="btn btn-primary btn-block btn-lg">Sign in</button>
+    </form>
+
+    <p class="card-foot" th:if="${allowSignUp}">
+        New institution? <a th:href="@{/signup}">Start a free account</a>
+    </p>
+</main>
+</body>
+</html>

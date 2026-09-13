@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<!--
+  The page students open. No account, no navigation into the application,
+  and nothing editable -- the grid fragment renders inert when the view is
+  not editable, and a public view never is.
+-->
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${shareLink.label} + ' | ' + ${organisation.name}">Timetable</title>
+    <meta name="robots" content="noindex">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="icon" th:href="@{/favicon.svg}" type="image/svg+xml">
+</head>
+<body>
+
+<header class="public-head">
+    <div class="public-head-inner">
+        <div>
+            <h1 class="page-title" th:text="${organisation.name}">Institution</h1>
+            <p class="page-sub" th:text="${shareLink.label}">Timetable</p>
+        </div>
+        <a class="btn btn-quiet btn-sm"
+           th:href="@{'/feed/shared/' + ${shareLink.token} + '.ics'}">Add to calendar</a>
+    </div>
+</header>
+
+<div class="page">
+    <div th:replace="~{fragments/grid :: table(${grid})}"></div>
+
+    <p class="grid-foot">
+        <span th:text="${grid.classCount}">0</span> classes &middot;
+        <span class="public-badge">
+            published by <span th:text="${organisation.name}">Institution</span>
+            with <a th:href="@{/}" th:text="${productName}">Chalkline</a>
+        </span>
+    </p>
+</div>
+</body>
+</html>

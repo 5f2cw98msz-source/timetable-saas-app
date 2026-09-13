@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<!-- Rendered for any unhandled error. No stack trace: those go to the log. -->
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Something went wrong</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="icon" th:href="@{/favicon.svg}" type="image/svg+xml">
+</head>
+<body class="bare">
+<div class="bare-wrap">
+    <div class="bare-brand">
+        <a class="brand" th:href="@{/}">
+            <span class="brand-mark" aria-hidden="true">C</span>
+            <span class="brand-text">Chalkline</span>
+        </a>
+    </div>
+    <div class="bare-card">
+        <h1 class="card-title" th:text="${status} == 404 ? 'Page not found' : 'Something went wrong'">
+            Something went wrong
+        </h1>
+        <p class="card-sub" th:if="${status} == 404">That address does not exist.</p>
+        <p class="card-sub" th:unless="${status} == 404">
+            The problem has been logged. Try again, and tell an administrator if it keeps happening.
+        </p>
+        <p class="card-foot"><a th:href="@{/}">Back to the start</a></p>
+    </div>
+</div>
+</body>
+</html>

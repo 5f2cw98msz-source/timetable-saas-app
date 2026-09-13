@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<body>
+<!-- Banners shown after an action. Included by every layout. -->
+<div th:fragment="banners" th:remove="tag">
+    <div class="alert alert-error" role="alert" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+    <div class="alert alert-success" role="status" th:if="${successMessage}" th:text="${successMessage}"></div>
+
+    <!-- Hitting a plan limit is a sales moment, not an error. -->
+    <div class="alert alert-upgrade" role="status" th:if="${upgradeMessage}">
+        <span th:text="${upgradeMessage}">Premium feature</span>
+        <a class="btn btn-primary btn-sm" th:href="@{/settings/billing}">See plans</a>
+    </div>
+</div>
+</body>
+</html>

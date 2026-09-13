@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/app :: page('Institution', ~{:: main})}" lang="en">
+<body>
+<main>
+    <div class="page-head">
+        <div>
+            <h1 class="page-title">Institution</h1>
+            <p class="page-sub">How your institution appears, and the shape of its week.</p>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/settings-nav :: tabs('organisation')}"></div>
+
+    <div class="grid-2">
+        <section class="card">
+            <h2 class="section-title">Details</h2>
+            <p class="section-sub">Shown to your staff and on any public timetable you publish.</p>
+
+            <form th:action="@{/settings/organisation/profile}" method="post"
+                  th:object="${profileForm}" class="form">
+                <label class="field">
+                    <span class="field-label">Name</span>
+                    <input type="text" th:field="*{name}" required>
+                </label>
+
+                <label class="field" th:if="${canBrand}">
+                    <span class="field-label">Accent colour</span>
+                    <input type="color" th:field="*{accentColour}">
+                    <span class="field-hint">Used on your public pages.</span>
+                </label>
+
+                <div class="locked" th:unless="${canBrand}">
+                    <div class="locked-head">
+                        <span class="chip chip-plan">Premium</span>
+                        <span class="locked-title">Custom branding</span>
+                    </div>
+                    <p class="locked-body">Put your own colour on the pages students see.</p>
+                    <a class="btn btn-primary btn-sm" th:href="@{/settings/billing}">See plans</a>
+                </div>
+
+                <div class="field">
+                    <span class="field-label">Join link for staff</span>
+                    <div class="copy-row">
+                        <input type="text" th:value="${joinUrl}" readonly id="join-url">
+                        <button type="button" class="btn btn-quiet" data-copy-for="join-url">Copy</button>
+                    </div>
+                    <span class="field-hint">
+                        Anyone with this link can create a lecturer account, while self sign-up is on.
+                    </span>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Save details</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="card">
+            <h2 class="section-title">The week</h2>
+            <p class="section-sub">
+                Classes are stored by position in these lists. Adding to the end is safe;
+                reordering or removing an entry relabels classes that are already scheduled.
+            </p>
+
+            <form th:action="@{/settings/organisation/scheduling}" method="post"
+                  th:object="${schedulingForm}" class="form">
+                <label class="field">
+                    <span class="field-label">Days, comma separated</span>
+                    <input type="text" th:field="*{days}" required>
+                </label>
+
+                <label class="field">
+                    <span class="field-label">Time slots, comma separated</span>
+                    <textarea th:field="*{slots}" required></textarea>
+                    <span class="field-hint">
+                        Write them as "09:00 - 10:00" so calendar subscriptions can read the times.
+                    </span>
+                </label>
+
+                <label class="check">
+                    <input type="checkbox" th:field="*{preventRoomClashes}">
+                    <span class="check-text">
+                        <strong>Stop two lecturers booking the same room at the same time</strong>
+                        Turn off if your rooms are shared deliberately.
+                    </span>
+                </label>
+
+                <label class="check">
+                    <input type="checkbox" th:field="*{allowSelfRegistration}">
+                    <span class="check-text">
+                        <strong>Let staff create their own account from the join link</strong>
+                        Turn off once everyone has an account, so only administrators can add people.
+                    </span>
+                </label>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Save the week</button>
+                </div>
+            </form>
+        </section>
+    </div>
+</main>
+</body>
+</html>

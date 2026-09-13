@@ -1,0 +1,27 @@
+# Build output
+target/
+*.jar
+!.mvn/wrapper/maven-wrapper.jar
+
+# Local H2 database
+data/
+*.mv.db
+*.trace.db
+
+# Secrets. Never commit a filled-in .env -- .env.example is the safe template.
+.env
+.env.*
+!.env.example
+
+# IDE
+.idea/
+*.iml
+*.iws
+.vscode/
+.classpath
+.project
+.settings/
+
+# OS
+.DS_Store
+Thumbs.db

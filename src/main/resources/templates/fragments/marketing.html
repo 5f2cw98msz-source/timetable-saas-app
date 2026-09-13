@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<!-- Shell for the public marketing pages. -->
+<html xmlns:th="http://www.thymeleaf.org"
+      th:fragment="page(pageTitle, content)"
+      lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${pageTitle}">Chalkline</title>
+    <meta name="description"
+          content="Chalkline is timetabling software for universities and colleges. Lecturers manage their own week, students see a live public timetable, and it all syncs to the calendar they already use.">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="icon" th:href="@{/favicon.svg}" type="image/svg+xml">
+</head>
+<body class="marketing">
+
+<nav class="m-nav">
+    <div class="m-nav-inner">
+        <a class="brand" th:href="@{/}">
+            <span class="brand-mark" aria-hidden="true">C</span>
+            <span class="brand-text" th:text="${productName}">Chalkline</span>
+        </a>
+        <div class="m-nav-links">
+            <a class="nav-link" href="/#features">Features</a>
+            <a class="nav-link" href="/#use-cases">Who it's for</a>
+            <a class="nav-link" th:href="@{/pricing}">Pricing</a>
+            <a class="nav-link" th:href="@{/login}">Sign in</a>
+            <a class="btn btn-primary btn-sm" th:href="@{/signup}">Start free</a>
+        </div>
+    </div>
+</nav>
+
+<div th:replace="${content}">Page content</div>
+
+<footer class="m-footer">
+    <div class="m-footer-inner">
+        <p>
+            <span th:text="${productName}">Chalkline</span> &middot;
+            timetabling for universities and colleges
+        </p>
+        <div class="m-footer-links">
+            <a th:href="@{/pricing}">Pricing</a>
+            <a th:href="@{/login}">Sign in</a>
+            <a th:href="@{/signup}">Start free</a>
+            <a th:href="'mailto:' + ${supportEmail}" th:text="${supportEmail}">support</a>
+        </div>
+    </div>
+</footer>
+
+<script th:src="@{/js/app.js}" defer></script>
+</body>
+</html>

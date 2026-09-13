@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/app :: page('Your account', ~{:: main})}" lang="en">
+<body>
+<main>
+    <div class="page-head">
+        <div>
+            <h1 class="page-title">Settings</h1>
+            <p class="page-sub">Your own details, and how your timetable reaches your calendar.</p>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/settings-nav :: tabs('account')}"></div>
+
+    <div class="grid-2">
+        <section class="card">
+            <h2 class="section-title">Your details</h2>
+            <p class="section-sub">Your email address is how you sign in and cannot be changed here.</p>
+
+            <form th:action="@{/settings/account}" method="post" th:object="${form}" class="form">
+                <label class="field">
+                    <span class="field-label">Name</span>
+                    <input type="text" th:field="*{displayName}" required>
+                </label>
+
+                <div class="field">
+                    <span class="field-label">Email</span>
+                    <input type="text" th:value="${user.email}" disabled>
+                    <span class="field-hint">
+                        Ask an administrator if this needs to change.
+                    </span>
+                </div>
+
+                <label class="check">
+                    <input type="checkbox" th:field="*{notifyOnChange}">
+                    <span class="check-text">
+                        <strong>Email me when my timetable changes</strong>
+                        Requires an email server to be configured on this deployment.
+                    </span>
+                </label>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <a class="btn btn-quiet" th:href="@{/settings/password}">Change password</a>
+                </div>
+            </form>
+        </section>
+
+        <section class="card">
+            <h2 class="section-title">Your calendar</h2>
+            <p class="section-sub">
+                Subscribe in Outlook, Google Calendar or Apple Calendar and your classes appear
+                alongside everything else. The calendar re-reads this link on its own, so changes
+                to the timetable follow automatically.
+            </p>
+
+            <th:block th:if="${hasCalendarFeed}">
+                <div class="field">
+                    <span class="field-label">Your private calendar link</span>
+                    <div class="copy-row">
+                        <input type="text" th:value="${calendarUrl}" readonly data-copy-source id="cal-url">
+                        <button type="button" class="btn btn-quiet" data-copy-for="cal-url">Copy</button>
+                    </div>
+                    <span class="field-hint">
+                        Treat this like a password: anyone who has it can see your timetable.
+                    </span>
+                </div>
+
+                <div class="danger-zone">
+                    <form th:action="@{/settings/account/calendar-token}" method="post">
+                        <button type="submit" class="link-danger"
+                                data-confirm="Create a new link? The current one stops working and you will need to re-subscribe.">
+                            Reset this link
+                        </button>
+                    </form>
+                </div>
+            </th:block>
+
+            <div class="locked" th:unless="${hasCalendarFeed}">
+                <div class="locked-head">
+                    <span class="chip chip-plan">Premium</span>
+                    <span class="locked-title">Calendar subscriptions</span>
+                </div>
+                <p class="locked-body">
+                    Put every class straight into the calendar your staff already use. One link,
+                    works with Outlook, Google and Apple, and no app to install.
+                </p>
+                <a class="btn btn-primary btn-sm" th:href="@{/settings/billing}">See plans</a>
+            </div>
+        </section>
+    </div>
+</main>
+</body>
+</html>

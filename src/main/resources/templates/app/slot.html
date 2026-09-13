@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/app :: page('Schedule a class', ~{:: main})}" lang="en">
+<body>
+<main>
+    <div class="page-narrow">
+        <a class="back-link" th:href="${backUrl}">&larr; Back to the timetable</a>
+
+        <h1 class="page-title"
+            th:text="${existing} != null ? 'Change this class' : 'Add a class'">Add a class</h1>
+        <p class="page-sub">
+            <strong th:text="${dayName}">Monday</strong>,
+            <strong th:text="${slotName}">08:00 - 09:00</strong>
+            &middot; <span th:text="${lecturerName}">Lecturer</span>
+        </p>
+
+        <div class="alert alert-info" th:if="${existing}">
+            This slot currently holds
+            <strong th:text="${existing.course.code}">CS101</strong>
+            in <strong th:text="${existing.room.name}">Lab 1</strong>. Saving replaces it.
+        </div>
+
+        <form th:action="@{/timetable/slot}" method="post" th:object="${form}" class="form card">
+            <input type="hidden" th:field="*{day}">
+            <input type="hidden" th:field="*{slot}">
+            <input type="hidden" th:field="*{lecturer}">
+
+            <label class="field">
+                <span class="field-label">Course</span>
+                <select th:field="*{courseId}" required>
+                    <option value="" disabled th:selected="${form.courseId == null}">Choose a course</option>
+                    <option th:each="course : ${courses}"
+                            th:value="${course.id}" th:text="${course.label}">CS101 - Intro</option>
+                </select>
+            </label>
+
+            <label class="field">
+                <span class="field-label">Room</span>
+                <select th:field="*{roomId}" required>
+                    <option value="" disabled th:selected="${form.roomId == null}">Choose a room</option>
+                    <option th:each="room : ${rooms}"
+                            th:value="${room.id}" th:text="${room.label}">Lab 1 (seats 30)</option>
+                </select>
+            </label>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary"
+                        th:text="${existing} != null ? 'Replace class' : 'Add class'">Add class</button>
+                <a class="btn btn-quiet" th:href="${backUrl}">Cancel</a>
+            </div>
+        </form>
+
+        <form th:if="${existing}" th:action="@{/timetable/slot/clear}" method="post" class="danger-zone">
+            <input type="hidden" name="day" th:value="${form.day}">
+            <input type="hidden" name="slot" th:value="${form.slot}">
+            <input type="hidden" name="lecturer" th:value="${form.lecturer}">
+            <button type="submit" class="btn btn-danger"
+                    data-confirm="Clear this class from the timetable?">Clear this slot</button>
+        </form>
+    </div>
+</main>
+</body>
+</html>
