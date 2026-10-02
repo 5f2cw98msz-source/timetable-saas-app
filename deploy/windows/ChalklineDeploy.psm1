@@ -1318,7 +1318,7 @@ function Invoke-ChalklineDeploySteps {
     & $say '6/9  Firewall'
     $categories = @(Get-ChalklineNetworkCategory)
     if ($Config.OpenFirewall -and $categories.Count -gt 0) {
-        $missing = @($categories | Where-Object { $_ -ne 'DomainAuthenticated' -and @($Config.FirewallProfiles) -notcontains $_ })
+        $missing = @($categories | Where-Object { @($Config.FirewallProfiles) -notcontains $_ })
         if ($missing -contains 'Public') {
             & $say '  WARNING: Windows has classified this network as Public, and the firewall rule does not include'
             & $say '           the Public profile, so other computers will NOT be able to connect. Tick Public in'

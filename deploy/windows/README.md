@@ -256,8 +256,9 @@ and use the [offline install](#offline-install).
 
 ### Anything else
 
-Every deployment is also recorded in `logs\deploy.log`, including the reason
-if it stopped, and Chalkline's own log is `logs\chalkline.log`. The end of one of those almost always says
+Once the install folder exists, every deployment is also recorded in
+`logs\deploy.log`, including the reason if it stopped, and Chalkline's own log
+is `logs\chalkline.log`. The end of one of those almost always says
 what went wrong.
 
 ---
@@ -307,3 +308,6 @@ Invoke-ChalklineDeploy -Config $config            # deploys
 It works with Windows PowerShell 5.1, which every Windows 10 and 11 computer
 has. It needs nothing else, and downloads only Java, from adoptium.net,
 checking it against the published checksum before installing it.
+
+To learn how it works inside, and how to change it safely, read
+[HOW-THE-INSTALLER-IS-MADE.md](HOW-THE-INSTALLER-IS-MADE.md).

@@ -206,7 +206,16 @@ src/main/resources/
   templates/             marketing site, application and public pages
   static/css/app.css     one stylesheet for all three
   static/js/app.js       the only JavaScript; everything works without it
+
+deploy/windows/
+  Deploy-Chalkline.cmd   double-click to start the Windows deployer
+  Deploy-Chalkline.ps1   the deployer's form
+  ChalklineDeploy.psm1   its engine: everything that changes the computer
+  tests/                 Pester tests for the engine
 ```
+
+How the Windows deployer is built, and how to change it, is explained in
+[deploy/windows/HOW-THE-INSTALLER-IS-MADE.md](deploy/windows/HOW-THE-INSTALLER-IS-MADE.md).
 
 Two rules worth keeping:
 
