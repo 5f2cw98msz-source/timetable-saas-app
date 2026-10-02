@@ -9,6 +9,10 @@ actually need to.
 
 You need a Linux machine with Docker, and somewhere for people to reach it.
 
+> **Only have a Windows computer?** The [Windows deployer](deploy/windows/README.md)
+> installs Chalkline on a Windows 10 or 11 PC on the school network, such as an
+> ICT lab computer, from a form. No Linux or Docker needed.
+
 ---
 
 ## 1. Install Docker

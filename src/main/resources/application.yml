@@ -23,8 +23,8 @@ spring:
   # DATABASE CONNECTION                                   <-- PLACEHOLDER
   # --------------------------------------------------------------------
   # Default: an H2 file at ./data/chalkline-db.mv.db. Zero setup, good for
-  # development, WRONG for production -- most cloud hosts wipe local disk on
-  # every deploy, which would erase every timetable.
+  # development, WRONG for production on most cloud hosts, which wipe local
+  # disk on every deploy and so would erase every timetable.
   #
   # For production set these to your managed PostgreSQL:
   #   DATABASE_URL=jdbc:postgresql://HOST:5432/DATABASE
@@ -80,7 +80,7 @@ server:
     whitelabel:
       enabled: false
 
-# Only the health check is exposed. Never add "env" or "configprops" -- they
+# Only the health check is exposed. Never add "env" or "configprops": they
 # would publish your database password and Stripe keys on a public URL.
 management:
   endpoints:
@@ -140,6 +140,24 @@ app:
     # Refused outright whenever Stripe IS configured, so it can never become
     # a way around paying on a real deployment.
     allow-manual-upgrade: ${ALLOW_MANUAL_UPGRADE:false}
+
+  # ------------------------------------------------------------------
+  # FIRST-RUN SETUP                                     <-- PLACEHOLDER
+  # For a deployment that serves ONE institution (e.g. a university
+  # hosting this on its own network, with ALLOW_SIGN_UP=false). Creates
+  # the institution and its administrator at first start, only when the
+  # database is completely empty. The administrator must choose a new
+  # password at first sign-in. The Windows deployer writes these for you.
+  # ------------------------------------------------------------------
+  setup:
+    organisation-name: ${INITIAL_ORG_NAME:}
+    admin-name: ${INITIAL_ADMIN_NAME:Administrator}
+    admin-email: ${INITIAL_ADMIN_EMAIL:}
+    admin-password: ${INITIAL_ADMIN_PASSWORD:}
+    seed-sample-catalogue: ${INITIAL_SEED_SAMPLES:false}
+    # PREMIUM unlocks every feature with no billing involved: right for an
+    # institution hosting its own copy. FREE keeps the five-account cap.
+    plan: ${INITIAL_PLAN:FREE}
 
   demo:
     # Fills a brand-new institution with a few sample rooms and courses so the

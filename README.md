@@ -244,7 +244,7 @@ the work.
 ./mvnw test
 ```
 
-59 tests, covering the things that would be expensive to get wrong:
+66 tests, covering the things that would be expensive to get wrong:
 
 | File | What it protects |
 |---|---|
@@ -255,6 +255,10 @@ the work.
 | `WebSecurityTest` | Route protection, CSRF, and that every page actually renders |
 | `CalendarFeedTest` | The .ics file is well formed and correctly escaped |
 | `ErrorRedirectTest` | An error message cannot become an open redirect |
+| `SetupBootstrapTest`, `SetupWithSamplesTest` | First-run setup for the Windows deployer: the institution is created once, and never in a database already in use |
+
+The Windows deployer has its own 77 tests, run with Pester; see
+[deploy/windows](deploy/windows/README.md#for-it-departments).
 
 ---
 
@@ -266,7 +270,10 @@ checklist, then the guide for wherever you are hosting it:
 - **[DEPLOY-AZURE.md](DEPLOY-AZURE.md)**
 - **[DEPLOY-AWS.md](DEPLOY-AWS.md)**
 - **[DEPLOY-GOOGLE-CLOUD.md](DEPLOY-GOOGLE-CLOUD.md)**
-- **[DEPLOY-SELF-HOSTED.md](DEPLOY-SELF-HOSTED.md)** for a university server
+- **[DEPLOY-SELF-HOSTED.md](DEPLOY-SELF-HOSTED.md)** for a university Linux server
+- **[The Windows deployer](deploy/windows/README.md)** for a Windows computer
+  on the school network, such as an ICT lab PC: a form to fill in, with no
+  Docker or command line
 
 To run it on your own laptop first, see
 **[RUN-ON-WINDOWS.md](RUN-ON-WINDOWS.md)**.

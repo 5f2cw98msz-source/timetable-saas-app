@@ -8,6 +8,7 @@ boring, because boring is what you can still run in two years.
 | | |
 |---|---|
 | **Start here** | [DEPLOY-SELF-HOSTED.md](DEPLOY-SELF-HOSTED.md) if it is going on a university server |
+| **A Windows PC on the school network** | [The Windows deployer](deploy/windows/README.md): fill in a form and it installs everything, for example on an ICT lab computer |
 | **Cloud** | [Azure](DEPLOY-AZURE.md) &middot; [AWS](DEPLOY-AWS.md) &middot; [Google Cloud](DEPLOY-GOOGLE-CLOUD.md) |
 
 ---
@@ -20,6 +21,11 @@ With no `DATABASE_URL` set, the app writes to `./data` next to itself. On most
 cloud platforms that disk is wiped on every deploy and every restart, so a
 term's timetables would vanish with no warning. Create a managed PostgreSQL
 database and point `DATABASE_URL` at it. Every guide here does this.
+
+The exception is one Windows computer on the school network, set up with the
+[Windows deployer](deploy/windows/README.md). Its disk is permanent, and the
+deployer backs the database up every night, so the built-in database is a
+reasonable choice for a single school there.
 
 ### 2. Decide whether this serves one institution or many
 

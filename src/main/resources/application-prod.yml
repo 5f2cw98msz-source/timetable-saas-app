@@ -1,7 +1,7 @@
 # ============================================================================
 #  PRODUCTION OVERRIDES
 #  Active when SPRING_PROFILES_ACTIVE=prod. Only what differs from
-#  application.yml -- everything else is inherited.
+#  application.yml; everything else is inherited.
 # ============================================================================
 
 spring:
@@ -14,9 +14,14 @@ server:
   servlet:
     session:
       cookie:
-        # The session cookie is never sent over plain HTTP. Every platform in
-        # DEPLOYMENT.md terminates HTTPS, so this is safe to force on.
-        secure: true
+        # The session cookie is only ever sent over HTTPS. Every cloud
+        # platform in DEPLOYMENT.md terminates HTTPS for you, so it is on.
+        #
+        # The one exception is a school or lab network reached over plain
+        # http://, where a secure cookie is silently dropped by the browser
+        # and NOBODY can sign in. Set SESSION_COOKIE_SECURE=false there. The
+        # Windows deployer does this when no HTTPS proxy is in front.
+        secure: ${SESSION_COOKIE_SECURE:true}
   error:
     include-stacktrace: never
     include-message: never

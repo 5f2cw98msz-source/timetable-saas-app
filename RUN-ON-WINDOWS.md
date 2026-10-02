@@ -311,6 +311,9 @@ exclusions. Do not disable the antivirus.
   [DEPLOYMENT.md](DEPLOYMENT.md). If your university will give you a server,
   [DEPLOY-SELF-HOSTED.md](DEPLOY-SELF-HOSTED.md) is the cheapest and simplest
   route, and the one to start with.
+- To put it on a Windows computer that everyone on the school network can
+  reach, such as an ICT lab PC, use the
+  [Windows deployer](deploy/windows/README.md). It is a form, not a command line.
 - The whole of `src/main/java/com/chalkline/` is yours to change. Start with
   `service/TimetableService.java`, which is where the rules about who can edit
   what actually live.
